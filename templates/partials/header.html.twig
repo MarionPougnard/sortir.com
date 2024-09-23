@@ -1,0 +1,24 @@
+<header class="bg-primary text-white">
+    <div class="container">
+        <nav class="main-nav">
+            <a class="home-main-link" href="{{ path('home') }}"><img src="{{ asset('img/logo_sortir_eni.png') }}" alt="sortir.com logo"><h1>Sortir.com</h1></a>
+            <a href="{{ path('event_list') }}">Les sorties</a>
+            <a href="{{ path('event_create') }}">Créer une sortie</a>
+        </nav>
+        <nav class="user-nav">
+            {# if the user is connected #}
+            {% if app.user %}
+                {% if is_granted("ROLE_ADMIN") %}
+                    <a href="{{ path('admin_dashboard') }}">Back-office</a>
+                {% endif %}
+
+                <a href="{{ path('user_edit') }}">{{ app.user.firstname }} {{ app.user.lastname }}</a>
+                <a href="{{ path('security_logout') }}">Déconnexion</a>
+            {% else %}
+                <a href="{{ path('security_login') }}">Connexion</a>
+                {# @TODO: show only to admin #}
+                <a href="{{ path('admin_user_create') }}">Créer un compte</a>
+            {% endif %}
+        </nav>
+    </div>
+</header>
