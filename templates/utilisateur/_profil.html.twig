@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+{#    <h2>Profil de {{ utilisateur.prenom }} {{ utilisateur.nom }}</h2>
+    <div>Campus : {{ utilisateur.campus.nom }}</div>#}
+{#    <div id="photo_profil">
+        {% if utilisateur.photo %}
+            <img src="{{ asset('uploads/profiles/'~user.picture) }}" alt="{{ user.firstname }} {{ user.lastname }}">
+        {% else %}
+            <img src="{{ asset('img/default_profil.png') }}" alt="Photo par défaut">
+        {% endif %}
+    </div>#}
+
+<div class="grid-container">
+    <div class="grid-x grid-margin-x align-center">
+        <table class="table unstriped">
+            <tbody>
+            <tr>
+                <th>Pseudo :</th>
+               {# <td>{{ utilisateur.pseudo }}</td>#}
+            </tr>
+            <tr>
+                <th>Nom :</th>
+              {#  <td>{{ utilisateur.nom }}</td>#}
+            </tr>
+            <tr>
+                <th>Prénom :</th>
+                {#<td>{{ utilisateur.prenom }}</td>#}
+            </tr>
+            <tr>
+                <th>Téléphone :</th>
+                {#<td>{{ utilisateur.telephone }}</td>#}
+            </tr>
+            <tr>
+                <th>Adresse email :</th>
+               {# <td>{{ utilisateur.email }}</td>#}
+            </tr>
+              <tr>
+                <th>Utilisateur actif</th>
+               {# <td>{{ utilisateur.actif ? 'Yes' : 'No' }}</td>#}
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{#    {% if app.user == user %}
+        <a href="{{ path('utilisateur_modification') }}">Modifier mon profil</a><br>
+        <a href="{{ path('utilisateur_telecharger') }}">Modifier mon image</a><br>
+        <a href="{{ path('utilisateur_modification_password') }}">Modifier mon mot de passe</a>
+    {% endif %}#}
+{% endblock %}
+
+{% block title %}Profil de {#{{ utilisateur.prenom }} {{ utilisateur.nom }}#}{% endblock %}
