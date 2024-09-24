@@ -6,7 +6,7 @@ body {
             rgba(255, 255, 255, 0.9),
             rgba(255, 255, 255, 0.9)
     ),
-    url(../img/logo_sortir_eni);
+    url(../public/img/logo_sortir_eni.png);
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-size: cover;
@@ -97,13 +97,6 @@ footer {
 
 footer:hover .footer-logo {
     transform: rotate(-345deg) scaleX(-1);
-}
-
-.home-hero {
-    background-image: url("../img/hellfest.jpg");
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center top;
 }
 
 .home-hero h1,
