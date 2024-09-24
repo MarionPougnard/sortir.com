@@ -9,7 +9,7 @@
             #}{# if the user is connected #}{#
             {% if app.user %}
                 {% if is_granted("ROLE_ADMIN") %}
-                    <a href="{{ path('admin_dashboard') }}">Back-office</a>
+                    <a href="{{ path('admin_dashboard') }}">Administration</a>
                 {% endif %}
 
                 <a href="{{ path('user_edit') }}">{{ app.user.firstname }} {{ app.user.lastname }}</a>

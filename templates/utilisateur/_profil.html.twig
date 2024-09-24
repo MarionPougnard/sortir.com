@@ -44,11 +44,11 @@
     </div>
 </div>
 
-{#    {% if app.user == user %}
+  {#  {% if app.user == user %}#}
         <a href="{{ path('utilisateur_modification') }}">Modifier mon profil</a><br>
-        <a href="{{ path('utilisateur_telecharger') }}">Modifier mon image</a><br>
-        <a href="{{ path('utilisateur_modification_password') }}">Modifier mon mot de passe</a>
-    {% endif %}#}
+{#        <a href="{{ path('utilisateur_telecharger') }}">Modifier mon image</a><br>
+        <a href="{{ path('utilisateur_modification_password') }}">Modifier mon mot de passe</a>#}
+{#    {% endif %}}#}
 {% endblock %}
 
 {% block title %}Profil de {#{{ utilisateur.prenom }} {{ utilisateur.nom }}#}{% endblock %}

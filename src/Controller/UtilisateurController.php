@@ -19,7 +19,7 @@ class UtilisateurController extends AbstractController
     }
 
     // Route page modification profil utilisateur
-    #[Route('/utilisateur/modification', name: 'utilisateurModification')]
+    #[Route('/utilisateur/modification', name: 'utilisateur_modification')]
     public function modificationProfil(): Response
     {
         return $this->render('utilisateur/_modification.html.twig', [
