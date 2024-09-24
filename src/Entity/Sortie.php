@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SortieRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -39,6 +41,21 @@ class Sortie
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Campus $Campus = null;
+
+    #[ORM\ManyToOne(inversedBy: 'sortiesOrganisees')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Utilisateur $Organisateur = null;
+
+    /**
+     * @var Collection<int, Utilisateur>
+     */
+    #[ORM\ManyToMany(targetEntity: Utilisateur::class, mappedBy: 'sortiesParticipees')]
+    private Collection $participants;
+
+    public function __construct()
+    {
+        $this->participants = new ArrayCollection();
+    }
 
 
     public function getId(): ?int
@@ -138,6 +155,45 @@ class Sortie
     public function setCampus(?Campus $Campus): static
     {
         $this->Campus = $Campus;
+
+        return $this;
+    }
+
+    public function getOrganisateur(): ?Utilisateur
+    {
+        return $this->Organisateur;
+    }
+
+    public function setOrganisateur(?Utilisateur $Organisateur): static
+    {
+        $this->Organisateur = $Organisateur;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Utilisateur>
+     */
+    public function getParticipants(): Collection
+    {
+        return $this->participants;
+    }
+
+    public function addParticipant(Utilisateur $participant): static
+    {
+        if (!$this->participants->contains($participant)) {
+            $this->participants->add($participant);
+            $participant->addSortiesParticipee($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipant(Utilisateur $participant): static
+    {
+        if ($this->participants->removeElement($participant)) {
+            $participant->removeSortiesParticipee($this);
+        }
 
         return $this;
     }
