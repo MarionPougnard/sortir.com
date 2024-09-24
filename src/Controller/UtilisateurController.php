@@ -11,10 +11,10 @@ class UtilisateurController extends AbstractController
 {
     // Route page profil utilisateur
     #[Route('/utilisateur', name: 'utilisateur')]
-    public function index(Utilisateur $utilisateur): Response
+    public function index(): Response
     {
         return $this->render('utilisateur/_profil.html.twig', [
-            'utilisateur' => $utilisateur
+
                ]);
     }
 
@@ -23,6 +23,7 @@ class UtilisateurController extends AbstractController
     public function modificationProfil(): Response
     {
         return $this->render('utilisateur/_modification.html.twig', [
+
         ]);
     }
 }
