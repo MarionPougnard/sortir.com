@@ -13,8 +13,9 @@ class UtilisateurController extends AbstractController
     #[Route('/utilisateur', name: 'utilisateur')]
     public function index(): Response
     {
+        $utilisateur  = $this->getUser();
         return $this->render('utilisateur/_profil.html.twig', [
-
+            'utilisateur' => $utilisateur
                ]);
     }
 

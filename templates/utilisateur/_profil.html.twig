@@ -1,54 +1,124 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-{#    <h2>Profil de {{ utilisateur.prenom }} {{ utilisateur.nom }}</h2>
-    <div>Campus : {{ utilisateur.campus.nom }}</div>#}
-{#    <div id="photo_profil">
-        {% if utilisateur.photo %}
-            <img src="{{ asset('uploads/profiles/'~user.picture) }}" alt="{{ user.firstname }} {{ user.lastname }}">
-        {% else %}
-            <img src="{{ asset('img/default_profil.png') }}" alt="Photo par défaut">
-        {% endif %}
-    </div>#}
 
-<div class="grid-container">
-    <div class="grid-x grid-margin-x align-center">
-        <table class="table unstriped">
-            <tbody>
-            <tr>
-                <th>Pseudo :</th>
-               {# <td>{{ utilisateur.pseudo }}</td>#}
-            </tr>
-            <tr>
-                <th>Nom :</th>
-              {#  <td>{{ utilisateur.nom }}</td>#}
-            </tr>
-            <tr>
-                <th>Prénom :</th>
-                {#<td>{{ utilisateur.prenom }}</td>#}
-            </tr>
-            <tr>
-                <th>Téléphone :</th>
-                {#<td>{{ utilisateur.telephone }}</td>#}
-            </tr>
-            <tr>
-                <th>Adresse email :</th>
-               {# <td>{{ utilisateur.email }}</td>#}
-            </tr>
-              <tr>
-                <th>Utilisateur actif</th>
-               {# <td>{{ utilisateur.actif ? 'Yes' : 'No' }}</td>#}
-            </tr>
-            </tbody>
-        </table>
+    {#    <div class="container mt-4 d-flex flex-column align-items-center">
+        <h2 class="text-center mb-4">Profil de {{ utilisateur.pseudo }}</h2>
+
+        <!-- Photo de profil -->
+        <div id="photo_profil" class="text-center mb-4">
+            {% if utilisateur.photo %}
+                <img src="{{ asset('uploads/profiles/'~user.picture) }}" alt="{{ utilisateur.prenom }} {{ utilisateur.nom }}">
+            {% else %}
+                <img src="{{ asset('img/default_profil.png') }}" alt="Photo par défaut">
+            {% endif %}
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="campus" class="col-sm-6 col-form-label">Campus</label>
+            <div class="col-sm-6">
+                <span class="form-text">{{ utilisateur.campus.nom }}</span>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="prenom" class="col-sm-6 col-form-label">Prénom</label>
+            <div class="col-sm-6">
+                <span class="form-text">{{ utilisateur.prenom }}</span>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="nom" class="col-sm-6 col-form-label">Nom</label>
+            <div class="col-sm-6">
+                <span class="form-text">{{ utilisateur.nom }}</span>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="telephone" class="col-sm-6 col-form-label">Téléphone</label>
+            <div class="col-sm-6">
+                <span class="form-text">{{ utilisateur.telephone }}</span>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="email" class="col-sm-6 col-form-label">Email</label>
+            <div class="col-sm-6">
+                <span class="form-text">{{ utilisateur.email }}</span>
+            </div>
+        </div>
+
+    </div> #}
+    {#
+    {% if app.utilisateur == utilisateur %}
+  <a href="{{ path('utilisateur_modification') }}">Modifier mon profil</a><br>
+      <a href="{{ path('utilisateur_suppression') }}">Supprimer mon compte</a> #}{#
+{% endif %}}
+#}
+
+
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x align-center">
+            <table class="table unstriped">
+
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="inputPassword6" class="col-form-label">Campus</label>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" aria-label="Default select example">
+                            <option selected>{{ utilisateur.campus.nom }}</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+                    <tbody>
+                    <tr>
+                        <th>Pseudo :</th>
+                        <td>{{ utilisateur.pseudo }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nom :</th>
+                        <td>{{ utilisateur.nom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Prénom :</th>
+                        <td>{{ utilisateur.prenom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Téléphone :</th>
+                        <td>{{ utilisateur.telephone }}</td>
+                    </tr>
+                    <tr>
+                        <th>Adresse email :</th>
+                        <td>{{ utilisateur.email }}</td>
+                    </tr>
+                    <div class="row g-3 align-items-center">
+                        <div class="col-auto">
+                            <label for="inputPassword6" class="col-form-label">Mot de passe</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="password" id="inputPassword6" class="form-control"
+                                   aria-describedby="passwordHelpInline">
+                        </div>
+
+                    </div>
+
+                    </tbody>
+                </div>
+            </table>
+
+        </div>
     </div>
-</div>
 
-  {#  {% if app.user == user %}#}
-        <a href="{{ path('utilisateur_modification') }}">Modifier mon profil</a><br>
-{#        <a href="{{ path('utilisateur_telecharger') }}">Modifier mon image</a><br>
-        <a href="{{ path('utilisateur_modification_password') }}">Modifier mon mot de passe</a>#}
-{#    {% endif %}}#}
+{% if utilisateur %}
+<a href="{{ path('utilisateur_modification') }}">Modifier mon profil</a>
+    {% endif %}
+
+
+
 {% endblock %}
 
-{% block title %}Profil de {#{{ utilisateur.prenom }} {{ utilisateur.nom }}#}{% endblock %}
+{% block title %}Profil de {{ utilisateur.prenom }} {{ utilisateur.nom }}{% endblock %}
