@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 class Sortie
@@ -17,18 +18,29 @@ class Sortie
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: 'le nom est requis')]
+    #[Assert\Length(min: 2, max: 50)]
     private ?string $nom = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotBlank(message: "La date et l'heure sont requises")]
+    #[Assert\DateTime]
     private ?\DateTimeInterface $dateHeureDebut = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
+    #[Assert\NotBlank(message: "La durée est requise")]
+    #[Assert\Positive(message: 'La durée doit être positive')]
     private ?\DateTimeInterface $duree = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotBlank(message: "La date limite d'inscription est requise")]
+    #[Assert\DateTime]
     private ?\DateTimeInterface $dateLimiteInscription = null;
 
     #[ORM\Column]
+    #[Assert\NotNull(message: "Le nombre maximum d'inscrits est obligatoire")]
+    #[Assert\Type(type: "integer", message: "Un nombre entier est attendu")]
+    #[Assert\Positive(message: 'Un nombre positif est attendu')]
     private ?int $nbInscriptionMax = null;
 
     #[ORM\Column(length: 500, nullable: true)]
@@ -40,7 +52,7 @@ class Sortie
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Campus $Campus = null;
+    private ?Campus $campus = null;
 
     #[ORM\ManyToOne(inversedBy: 'sortiesOrganisees')]
     #[ORM\JoinColumn(nullable: false)]
@@ -51,6 +63,10 @@ class Sortie
      */
     #[ORM\ManyToMany(targetEntity: Utilisateur::class, mappedBy: 'sortiesParticipees')]
     private Collection $participants;
+
+    #[ORM\ManyToOne(inversedBy: 'sorties')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Lieu $lieu = null;
 
     public function __construct()
     {
@@ -149,12 +165,12 @@ class Sortie
 
     public function getCampus(): ?Campus
     {
-        return $this->Campus;
+        return $this->campus;
     }
 
-    public function setCampus(?Campus $Campus): static
+    public function setCampus(?Campus $campus): static
     {
-        $this->Campus = $Campus;
+        $this->campus = $campus;
 
         return $this;
     }
@@ -194,6 +210,18 @@ class Sortie
         if ($this->participants->removeElement($participant)) {
             $participant->removeSortiesParticipee($this);
         }
+
+        return $this;
+    }
+
+    public function getLieu(): ?Lieu
+    {
+        return $this->lieu;
+    }
+
+    public function setLieu(?Lieu $lieu): static
+    {
+        $this->lieu = $lieu;
 
         return $this;
     }
