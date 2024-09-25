@@ -57,10 +57,10 @@
         </div>
     </div>
 
-{% if utilisateur %}
-<a href="{{ path('utilisateur_modification') }}">Modifier mon profil</a>
+    {% if utilisateur %}
+        <a href="{{ path('utilisateur_modification', { 'id': utilisateur.id }) }}">Modifier mon profil</a>
     {% endif %}
 
 {% endblock %}
 
-{% block title %}Profil de {{ utilisateur.prenom }} {{ utilisateur.nom }}{% endblock %}
+{% block title %}Profil de {{ utilisateur.pseudo }} {% endblock %}

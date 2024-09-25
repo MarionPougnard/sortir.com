@@ -52,11 +52,6 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('campus', ChoiceType::class,
-            [
-            'choices' => array_flip($options['choices']),
-                'label' => 'Campus'
-            ])
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,
                 'choice_label' => 'nom',
