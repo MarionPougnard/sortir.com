@@ -2,62 +2,6 @@
 
 {% block body %}
 
-    {#    <div class="container mt-4 d-flex flex-column align-items-center">
-        <h2 class="text-center mb-4">Profil de {{ utilisateur.pseudo }}</h2>
-
-        <!-- Photo de profil -->
-        <div id="photo_profil" class="text-center mb-4">
-            {% if utilisateur.photo %}
-                <img src="{{ asset('uploads/profiles/'~user.picture) }}" alt="{{ utilisateur.prenom }} {{ utilisateur.nom }}">
-            {% else %}
-                <img src="{{ asset('img/default_profil.png') }}" alt="Photo par défaut">
-            {% endif %}
-        </div>
-
-        <div class="mb-3 row align-items-center">
-            <label for="campus" class="col-sm-6 col-form-label">Campus</label>
-            <div class="col-sm-6">
-                <span class="form-text">{{ utilisateur.campus.nom }}</span>
-            </div>
-        </div>
-
-        <div class="mb-3 row align-items-center">
-            <label for="prenom" class="col-sm-6 col-form-label">Prénom</label>
-            <div class="col-sm-6">
-                <span class="form-text">{{ utilisateur.prenom }}</span>
-            </div>
-        </div>
-
-        <div class="mb-3 row align-items-center">
-            <label for="nom" class="col-sm-6 col-form-label">Nom</label>
-            <div class="col-sm-6">
-                <span class="form-text">{{ utilisateur.nom }}</span>
-            </div>
-        </div>
-
-        <div class="mb-3 row align-items-center">
-            <label for="telephone" class="col-sm-6 col-form-label">Téléphone</label>
-            <div class="col-sm-6">
-                <span class="form-text">{{ utilisateur.telephone }}</span>
-            </div>
-        </div>
-
-        <div class="mb-3 row align-items-center">
-            <label for="email" class="col-sm-6 col-form-label">Email</label>
-            <div class="col-sm-6">
-                <span class="form-text">{{ utilisateur.email }}</span>
-            </div>
-        </div>
-
-    </div> #}
-    {#
-    {% if app.utilisateur == utilisateur %}
-  <a href="{{ path('utilisateur_modification') }}">Modifier mon profil</a><br>
-      <a href="{{ path('utilisateur_suppression') }}">Supprimer mon compte</a> #}{#
-{% endif %}}
-#}
-
-
     <div class="grid-container">
         <div class="grid-x grid-margin-x align-center">
             <table class="table unstriped">
@@ -116,8 +60,6 @@
 {% if utilisateur %}
 <a href="{{ path('utilisateur_modification') }}">Modifier mon profil</a>
     {% endif %}
-
-
 
 {% endblock %}
 
