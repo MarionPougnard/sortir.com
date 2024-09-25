@@ -6,6 +6,7 @@ use App\Repository\CampusRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CampusRepository::class)]
 class Campus
@@ -16,12 +17,14 @@ class Campus
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: 'Le nom du campus est obligatoire')]
+    #[Assert\Length(min: 1, max: 50)]
     private ?string $nom = null;
 
     /**
      * @var Collection<int, Sortie>
      */
-    #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'Campus')]
+    #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'campus')]
     private Collection $sorties;
 
     /**
