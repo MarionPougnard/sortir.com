@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x align-center">
+            <table class="table unstriped">
+
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="inputPassword6" class="col-form-label">Campus</label>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" aria-label="Default select example">
+                            <option selected>{{ utilisateur.campus.nom }}</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+                    <tbody>
+                    <tr>
+                        <th>Pseudo :</th>
+                        <td>{{ utilisateur.pseudo }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nom :</th>
+                        <td>{{ utilisateur.nom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Prénom :</th>
+                        <td>{{ utilisateur.prenom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Téléphone :</th>
+                        <td>{{ utilisateur.telephone }}</td>
+                    </tr>
+                    <tr>
+                        <th>Adresse email :</th>
+                        <td>{{ utilisateur.email }}</td>
+                    </tr>
+                    <div class="row g-3 align-items-center">
+                        <div class="col-auto">
+                            <label for="inputPassword6" class="col-form-label">Mot de passe</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="password" id="inputPassword6" class="form-control"
+                                   aria-describedby="passwordHelpInline">
+                        </div>
+
+                    </div>
+
+                    </tbody>
+                </div>
+            </table>
+
+        </div>
+    </div>
+
+{% if utilisateur %}
+<a href="{{ path('utilisateur_modification') }}">Modifier mon profil</a>
+    {% endif %}
+
+{% endblock %}
+
+{% block title %}Profil de {{ utilisateur.prenom }} {{ utilisateur.nom }}{% endblock %}

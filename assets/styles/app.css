@@ -1,3 +1,183 @@
 body {
-    background-color: skyblue;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-image: linear-gradient(
+            rgba(255, 255, 255, 0.9),
+            rgba(255, 255, 255, 0.9)
+    ),
+    url(../../public/img/logo_sortir_eni.png);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+header {
+    padding: 10px 0 10px 0;
+    background-color: #FFFCF5;
+}
+
+header .container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+header h1 {
+    font-size: 1.4rem;
+}
+
+header a {
+    color: #4CB24A;
+}
+
+header > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+header .main-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+}
+
+header .main-nav a {
+    margin-right: 20px;
+}
+
+header .main-nav a:hover {
+    color: #ffc107;
+}
+
+header .main-nav h1 {
+    margin: 0 30px 0 0;
+}
+
+header img {
+    display: none;
+    height: 70px;
+    position: absolute;
+    top: -6px;
+    left: -7px;
+    transform: rotate(15deg);
+    transition: all 300ms;
+}
+
+header .home-main-link:hover img {
+    transform: rotate(-10deg);
+}
+
+header .user-nav {
+    display: flex;
+    flex-direction: column;
+}
+
+header .user-nav a {
+    margin-left: 0;
+}
+
+main {
+    flex-grow: 1;
+    margin-top: 20px;
+}
+
+footer {
+    padding: 40px 0;
+    text-align:center;
+    background-color: #FFFCF5;
+}
+
+.footer-logo {
+    height: 70px;
+    transform: rotate(15deg);
+    margin-left: 30px;
+    transition: all 300ms;
+}
+
+footer:hover .footer-logo {
+    transform: rotate(-345deg) scaleX(-1);
+}
+
+.home-hero h1,
+.home-hero p {
+    background-color: #2F414A;
+    color: #fff;
+    display: inline-block;
+    padding: 1rem 2rem;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    -webkit-box-shadow: 0px 0px 8px 1px #000000;
+    box-shadow: 0px 0px 8px 1px #000000;
+    border-radius: 2px;
+}
+
+.home-hero h1 {
+    padding: 0.7rem 2rem 1rem 2rem;
+}
+
+.home-hero p {
+    background-color: #ffc107;
+    color: black;
+    font-weight: bold;
+    transform: rotate(-3deg);
+    margin-top: -10px;
+}
+
+.hero-content {
+    height: 80vh;
+}
+
+#map {
+    height: 500px;
+    width: 100%;
+}
+
+#profile_pic {
+    max-width: 400px;
+}
+
+#profile_pic img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.event-pagination {
+    padding: 20px 0 0 0;
+}
+
+ul.pagination {
+    justify-content: center;
+}
+
+.event-filters-checkboxes {
+}
+
+.event-filters-checkboxes .form-group {
+    margin-bottom: 0;
+}
+
+.event-table {
+    font-size: 0.9rem;
+}
+
+@media screen and (min-width: 800px) {
+    header .container,
+    header .main-nav,
+    header .user-nav {
+        flex-direction: row;
+    }
+
+    header .user-nav a {
+        margin-left: 20px;
+    }
+
+    header img {
+        display: block;
+    }
+
+    header .main-nav h1 {
+        margin: 0 30px 0 35px;
+    }
 }
