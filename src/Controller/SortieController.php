@@ -12,6 +12,7 @@ use App\Form\SortieCreationModificationType;
 use App\Repository\CampusRepository;
 use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
+use App\Repository\UtilisateurRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,10 +21,29 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted('ROLE_USER')]
+//#[IsGranted('ROLE_USER')]
 #[Route('/sorties', name: 'sorties_')]
 class SortieController extends AbstractController
 {
+    #[Route('/{id<\d+>}', name: 'detail', methods: ['GET'])]
+    public function voirDetailSortir(
+        SortieRepository $sortieRepository,
+        int $id =null
+    ): Response {
+        /*$user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }*/
+
+        $sortie = $sortieRepository->find($id);
+
+
+        return $this->render('sortie/afficherSortie.html.twig', [
+            'title' => 'Afficher une sortie',
+            'sortie' => $sortie,
+        ]);
+
+    }
 
     #[Route('/creer', name: 'creer', methods: ['GET', 'POST'])]
     public function creerSortie(

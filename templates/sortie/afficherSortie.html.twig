@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() ~ title }}
+{% endblock %}
+
+{% block body %}
+    <h2 class="text-center fw-bold mb-5 mx-1 mx-md-4 mt-4">{{ title }}</h2>
+    <div class="container h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-lg-12 col-xl-12">
+                <div class="text-black" style="border-radius: 25px;">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-4">
+                                <label for="nom" class="form-label">Nom de la sortie</label>
+                                <input type="text" class="form-control" id="nom" value="{{ sortie.nom }}" readonly>
+                            </div>
+                            <div class="mb-4">
+                                <label for="dateHeureDebut" class="form-label">Date et Heure de Début</label>
+                                <input type="datetime-local" class="form-control" id="dateHeureDebut" value="{{ sortie.dateHeureDebut|date('Y-m-d H:i') }}" readonly>
+                            </div>
+                            <div class="mb-4">
+                                <label for="dateLimiteInscription" class="form-label">Date Limite d'Inscription</label>
+                                <input type="datetime-local" class="form-control" id="dateLimiteInscription" value="{{ sortie.dateLimiteInscription|date('Y-m-d H:i') }}" readonly>
+                            </div>
+                            <div class="mb-4">
+                                <label for="nbInscriptionMax" class="form-label">Nombre de places</label>
+                                <input type="text" class="form-control" id="nbInscriptionMax" value="{{ sortie.nbInscriptionMax }}" readonly>
+                            </div>
+                            <div class="mb-4">
+                                <label for="duree" class="form-label">Durée (minutes)</label>
+                                <input type="text" class="form-control" id="duree" value="{{ sortie.duree }}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-4">
+                                <label for="campus" class="form-label">Campus</label>
+                                <input type="text" class="form-control" id="campus" value="{{ sortie.campus.nom }}" readonly>
+                            </div>
+                            <div class="mb-4">
+                                <label for="ville" class="form-label">Ville</label>
+                                <input type="text" class="form-control" id="ville" value="{{ sortie.lieu.ville.nom }}" readonly>
+                            </div>
+                            <div class="mb-4">
+                                <label for="lieu" class="form-label">Lieu</label>
+                                <input type="text" class="form-control" id="lieu" value="{{ sortie.lieu.nom }}" readonly>
+                            </div>
+                            <div class="mb-4">
+                                <label for="rue" class="form-label">Rue</label>
+                                <input type="text" class="form-control" id="rue" value="{{ sortie.lieu.rue }}" readonly>
+                            </div>
+                            <div class="mb-4">
+                                <label for="latitude">Latitude / Longitude</label>
+                                <div class="d-flex">
+                                    <input type="text" class="form-control me-2" id="latitude" value="{{ sortie.lieu.latitude }}" readonly>
+                                    <input type="text" class="form-control" id="longitude" value="{{ sortie.lieu.longitude }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <div class="form-outline">
+                                <label for="infosSortie" class="form-label">Informations sur la Sortie</label>
+                                <textarea class="form-control" id="infosSortie" rows="4" readonly>{{ sortie.infosSortie }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h4>Liste des participants inscrits</h4>
+    <table class="table table-striped">
+        <thead>
+            <th scope="col">Pseudo</th>
+            <th scope="col">Nom</th>
+        </thead>
+        <tbody>
+            {% for participant in sortie.participants %}
+                <tr>
+                    <td><a href="{{ path('utilisateur_profil_id', {'id': participant.id}) }}"{{ participant.pseudo }}</td>
+                    <td>{{ participant.prenom }} {{ participant.nom }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

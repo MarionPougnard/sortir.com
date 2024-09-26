@@ -12,19 +12,28 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UtilisateurController extends AbstractController
 {
-    // Route page profil utilisateur
     #[Route('/profil', name: 'utilisateur_profil')]
+    #[Route('/profil/{id<\d+>}', name: 'utilisateur_profil_id')]
     #[IsGranted('ROLE_USER')]
-    public function index(): Response
+    public function voirProfil(
+        ?Utilisateur $utilisateur,
+        UserInterface $utilisateurConnecte
+    ): Response
     {
-        $utilisateur  = $this->getUser();
+        if ($utilisateur === null) {
+            $utilisateur = $utilisateurConnecte;
+        }
+
+        $estutilisateur = $utilisateur->getId() === $utilisateurConnecte->getId();
         return $this->render('utilisateur/_profil.html.twig', [
-            'utilisateur' => $utilisateur
-               ]);
+            'utilisateur' => $utilisateur,
+            'estutilisateur' => $estutilisateur,
+       ]);
     }
 
     #[IsGranted('ROLE_USER')]
