@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -22,16 +23,17 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nom', TextType::class)
-            ->add('prenom', TextType::class)
-            ->add('pseudo', TextType::class)
-            ->add('email', EmailType::class)
-            ->add('telephone',TextType::class)
+            ->add('nom', TextType::class, ['label' => 'Nom'])
+            ->add('prenom', TextType::class, ['label' => 'Prénom'])
+            ->add('pseudo', TextType::class, ['label' => 'Pseudo'])
+            ->add('email', EmailType::class, ['label' => 'Email'])
+            ->add('telephone', TextType::class, ['label' => 'Téléphone', 'attr' => ['placeholder' => '+33_  _ _  _ _  _ _  _ _']])
             ->add('agreeTerms', CheckboxType::class, [
+                'label' => 'Valider les conditions',
                 'mapped' => false,
                 'constraints' => [
                     new IsTrue([
-                        'message' => 'You should agree to our terms.',
+                        'message' => 'Vous devez valider les conditions.',
                     ]),
                 ],
             ])
@@ -52,19 +54,18 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('campus', ChoiceType::class,
-            [
-            'choices' => array_flip($options['choices']),
-                'label' => 'Campus'
-            ])
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,
                 'choice_label' => 'nom',
                 'label' => 'Campus',
                 'placeholder' => 'Choisissez un campus',
             ])
-        ;
+            ->add('save', SubmitType::class, [
+                'label' => 'Enregistrer',
+                'attr' => ['class' => 'btn btn-success']
+            ]);
     }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

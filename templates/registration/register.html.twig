@@ -1,33 +1,111 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Créer un utilisateur{% endblock %}
 
 {% block body %}
-<h1>Register</h1>
+<h1 class="text-center mt-3">Créer un utilisateur</h1>
 
-{{ form_errors(registrationForm) }}
+<div class="container">
+    <div class="row justify-content-center">
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.nom)
-        }}
-        {{ form_row(registrationForm.prenom) }}
-        {{ form_row(registrationForm.pseudo) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.telephone)
-        }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms)
-        }}
+        <div class="col-md-8">
+            {{ form_errors(registrationForm) }}
+        </div>
 
-**Champ de sélection du campus:**
-    {{ form_row(registrationForm.campus, {
-        'label': 'Campus',
-        'compound': false,
-        'attr': {'class': 'form-control'}
-    }) }}
+        <div class="container">
+            <div class="row justify-content-center">
 
-    <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
-{% endblock %}
+                <div class="col-md-8">
+                    {{ form_start(registrationForm) }}
+
+                    <div class="form-group row mt-5">
+                        <label for="nom" class="col-sm-3 col-form-label">
+                            {{ form_label(registrationForm.campus) }}
+                        </label>
+                        <div class="col-sm-9">
+                            {{ form_widget(registrationForm.campus, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(registrationForm.campus) }}
+                        </div>
+                    </div>
+
+                            <div class="form-group row mt-3">
+                                <label for="nom" class="col-sm-3 col-form-label">
+                    {{ form_label(registrationForm.nom) }}
+                                </label>
+                                <div class="col-sm-9">
+                                    {{ form_widget(registrationForm.nom, {'attr': {'class': 'form-control'}}) }}
+                                    {{ form_errors(registrationForm.nom) }}
+                                </div>
+                            </div>
+
+                    <div class="form-group row mt-3">
+                        <label for="prenom" class="col-sm-3 col-form-label">
+                    {{ form_label(registrationForm.prenom) }}
+                        </label>
+                        <div class="col-sm-9">
+                            {{ form_widget(registrationForm.prenom, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(registrationForm.prenom) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group row mt-3">
+                        <label for="pseudo" class="col-sm-3 col-form-label">
+                    {{ form_label(registrationForm.pseudo) }}
+                        </label>
+                        <div class="col-sm-9">
+                            {{ form_widget(registrationForm.pseudo, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(registrationForm.pseudo) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group row mt-3">
+                        <label for="email" class="col-sm-3 col-form-label">
+                    {{ form_label(registrationForm.email) }}
+                        </label>
+                        <div class="col-sm-9">
+                            {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(registrationForm.email) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group row mt-3">
+                        <label for="telephone" class="col-sm-3 col-form-label">
+                    {{ form_label(registrationForm.telephone) }}
+                        </label>
+                        <div class="col-sm-9">
+                            {{ form_widget(registrationForm.telephone, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(registrationForm.telephone) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group row mt-3">
+                        <label for="password" class="col-sm-3 col-form-label">
+                    {{ form_label(registrationForm.plainPassword) }}
+                        </label>
+                        <div class="col-sm-9">
+                            {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(registrationForm.plainPassword) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group row mt-3">
+                        <div class="col-sm-12 d-flex justify-content-center">
+                            <div class="form-check">
+                                {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input'}}) }}
+                                <label class="form-check-label" for="agreeTerms">
+                                    {{ form_label(registrationForm.agreeTerms) }}
+                                </label>
+                                {{ form_errors(registrationForm.agreeTerms) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bouton "Enregistrer" -->
+                    <div class="form-group d-flex justify-content-center mt-4">
+                        {{ form_widget(registrationForm.save, {'attr': {'class': 'btn btn-success'}}) }}
+                    </div>
+
+                    {{ form_end(registrationForm) }}
+                </div>
+            </div>
+            {% endblock %}

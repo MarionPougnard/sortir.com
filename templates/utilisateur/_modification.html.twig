@@ -3,23 +3,126 @@
 {% block title %}Modifier mon profil{% endblock %}
 
 {% block body %}
-    <h2>Modifier mon profil</h2>
-
-    <div class="row">
-{#        <div class="col-sm-4">
-            <div id="profile_pic">
-                {% if app.user.picture %}
-                    <img src="{{ asset('uploads/profiles/'~app.user.picture) }}" alt="{{ app.user.firstname }} {{ app.user.lastname }}">
-                {% else %}
-                    <img src="{{ asset('img/default_profil.png') }}" alt="Photo par défaut">
-                {% endif %}
-            </div>
-            <a href="{{ path('utilisateur_telecharger') }}">Changer ma photo</a><br>
-            <a href="{{ path('utilisateur_modification_password') }}">Modifier mon mot de passe</a>
-
-        </div>
-        <div class="col-sm-8">
-            {{ form(registrationForm) }}
-        </div>#}
+    <div id="title" class="text-center mt-3">
+        <h1>Modifier mon profil</h1>
     </div>
+
+    {# {{ include('utilisateur/_form.html.twig') }} #}
+
+    <div class="container">
+        <div class="row d-flex justify-content-center">
+
+            <div class="col-md-8">
+                {{ form_start(modifprofilform) }}
+
+                <!-- Campus -->
+                <div class="form-group row mt-5">
+                    <label for="nom" class="col-sm-3 col-form-label">
+                        {{ form_label(modifprofilform.campus) }}
+                    </label>
+                    <div class="col-sm-9">
+                        {{ form_widget(modifprofilform.campus, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(modifprofilform.campus) }}
+                    </div>
+                </div>
+
+                <!-- Pseudo -->
+                <div class="form-group row mt-3">
+                    <label for="nom" class="col-sm-3 col-form-label">
+                        {{ form_label(modifprofilform.pseudo) }}
+                    </label>
+                    <div class="col-sm-9">
+                        {{ form_widget(modifprofilform.pseudo, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(modifprofilform.pseudo) }}
+                    </div>
+                </div>
+
+                <!-- Prenom -->
+                <div class="form-group row mt-3">
+                    <label for="nom" class="col-sm-3 col-form-label">
+                        {{ form_label(modifprofilform.prenom) }}
+                    </label>
+                    <div class="col-sm-9">
+                        {{ form_widget(modifprofilform.prenom, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(modifprofilform.prenom) }}
+                    </div>
+                </div>
+
+                <!-- Nom -->
+                <div class="form-group row mt-3">
+                    <label for="nom" class="col-sm-3 col-form-label">
+                        {{ form_label(modifprofilform.nom) }}
+                    </label>
+                    <div class="col-sm-9">
+                        {{ form_widget(modifprofilform.nom, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(modifprofilform.nom) }}
+                    </div>
+                </div>
+
+                <!-- Telephone -->
+                <div class="form-group row mt-3">
+                    <label for="nom" class="col-sm-3 col-form-label">
+                        {{ form_label(modifprofilform.telephone) }}
+                    </label>
+                    <div class="col-sm-9">
+                        {{ form_widget(modifprofilform.telephone, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(modifprofilform.telephone) }}
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group row mt-3">
+                    <label for="email" class="col-sm-3 col-form-label">
+                        {{ form_label(modifprofilform.email) }}
+                    </label>
+                    <div class="col-sm-9">
+                        {{ form_widget(modifprofilform.email, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(modifprofilform.email) }}
+                    </div>
+                </div>
+
+                <!-- Mot de passe -->
+                <div class="form-group row mt-3">
+                    <label for="motDePasse" class="col-sm-3 col-form-label">
+                        {{ form_label(modifprofilform.motDePasse) }}
+                    </label>
+                    <div class="col-sm-9">
+                        {{ form_widget(modifprofilform.motDePasse, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(modifprofilform.motDePasse) }}
+                    </div>
+                </div>
+
+                <!-- Confirmation mot de passe -->
+                <div class="form-group row mt-3">
+                    <label for="confirmMotDePasse" class="col-sm-3 col-form-label">
+                        {{ form_label(modifprofilform.confirmMotDePasse) }}
+                    </label>
+                    <div class="col-sm-9">
+                        {{ form_widget(modifprofilform.confirmMotDePasse, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(modifprofilform.confirmMotDePasse) }}
+                    </div>
+                </div>
+
+                <!-- Photo -->
+                <div class="form-group row mt-3">
+                    <label for="motDePasse" class="col-sm-3 col-form-label">
+                        {{ form_label(modifprofilform.photo) }}
+                    </label>
+                    <div class="col-sm-9">
+                        {{ form_widget(modifprofilform.photo, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(modifprofilform.photo) }}
+                    </div>
+                </div>
+
+                <!-- Bouton "Enregistrer" -->
+                <div class="form-group d-flex justify-content-center mt-5">
+                    {{ form_widget(modifprofilform.save, {'attr': {'class': 'btn btn-success'}}) }}
+                </div>
+
+                {{ form_end(modifprofilform) }}
+            </div>
+        </div>
+    </div>
+
+
 {% endblock %}
