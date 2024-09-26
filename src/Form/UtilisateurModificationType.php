@@ -29,7 +29,7 @@ class UtilisateurModificationType extends AbstractType
         ->add('pseudo', TextType::class, ['label'=>'Pseudo'])
         ->add('nom', TextType::class, ['label'=>'Nom'])
         ->add('prenom', TextType::class, ['label'=>'Prénom'])
-        ->add('telephone', TextType::class, ['label'=>'Téléphone', 'attr' =>['placeholder' => '33_  _ _  _ _  _ _  _ _']])
+        ->add('telephone', TextType::class, ['label'=>'Téléphone', 'attr' =>['placeholder' => '+33_  _ _  _ _  _ _  _ _']])
         ->add('email', EmailType::class, ['label'=>'Email'])
         ->add('photo', FileType::class, [
             'mapped' => false,
