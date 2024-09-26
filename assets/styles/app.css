@@ -74,6 +74,11 @@ main {
     margin-top: 20px;
 }
 
+.photo_profil {
+    height: 50px;
+    width: auto;
+}
+
 .card-footer {
     background-color: #FFFCF5;
     color : #4CB24A;

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Sortie;
 use App\Entity\Utilisateur;
 use App\Form\UtilisateurModificationType;
+use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -34,6 +35,18 @@ class UtilisateurController extends AbstractController
             'utilisateur' => $utilisateur,
             'estutilisateur' => $estutilisateur,
        ]);
+    }
+
+    // Route page liste utilisateurs
+    #[Route('/liste_utilisateurs', name: 'utilisateur_liste')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function listeUtilisateurs(UtilisateurRepository $utilisateurRepository): Response
+    {
+        $utilisateurs = $utilisateurRepository->findAll();
+
+        return $this->render('utilisateur/_liste.html.twig', [
+            'utilisateurs' => $utilisateurs
+        ]);
     }
 
     #[IsGranted('ROLE_USER')]
@@ -88,7 +101,7 @@ class UtilisateurController extends AbstractController
             $this->addFlash('success', "L'étudiant(e) a bien été supprimé(e)");
         }
 
-        return $this->redirectToRoute('accueil');
+        return $this->redirectToRoute('app_accueil');
     }
 
 }
