@@ -26,6 +26,9 @@ class UtilisateurController extends AbstractController
                ]);
     }
 
+    #[IsGranted('ROLE_USER')]
+    #[Route('/utilisateur/modification', name: 'utilisateur_modification')]
+    public function modificationProfil(): Response
     // Route page modification profil utilisateur
     #[Route('/{id}/modification', name: 'utilisateur_modification', methods: ['GET', 'POST'])]
     public function modificationProfil(Request $request, Utilisateur $utilisateur, EntityManagerInterface $entityManager): Response
