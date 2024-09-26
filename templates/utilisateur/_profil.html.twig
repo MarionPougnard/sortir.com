@@ -1,65 +1,61 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-
-    <div class="grid-container">
-        <div class="grid-x grid-margin-x align-center">
-            <table class="table unstriped">
-
-                <div class="row g-3 align-items-center">
-                    <div class="col-auto">
-                        <label for="inputPassword6" class="col-form-label">Campus</label>
-                    </div>
-                    <div class="col-auto">
-                        <select class="form-select" aria-label="Default select example">
-                            <option selected>{{ utilisateur.campus.nom }}</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
-                        </select>
-                    </div>
-                    <tbody>
-                    <tr>
-                        <th>Pseudo :</th>
-                        <td>{{ utilisateur.pseudo }}</td>
-                    </tr>
-                    <tr>
-                        <th>Nom :</th>
-                        <td>{{ utilisateur.nom }}</td>
-                    </tr>
-                    <tr>
-                        <th>Prénom :</th>
-                        <td>{{ utilisateur.prenom }}</td>
-                    </tr>
-                    <tr>
-                        <th>Téléphone :</th>
-                        <td>{{ utilisateur.telephone }}</td>
-                    </tr>
-                    <tr>
-                        <th>Adresse email :</th>
-                        <td>{{ utilisateur.email }}</td>
-                    </tr>
-                    <div class="row g-3 align-items-center">
-                        <div class="col-auto">
-                            <label for="inputPassword6" class="col-form-label">Mot de passe</label>
-                        </div>
-                        <div class="col-auto">
-                            <input type="password" id="inputPassword6" class="form-control"
-                                   aria-describedby="passwordHelpInline">
-                        </div>
-
-                    </div>
-
-                    </tbody>
-                </div>
-            </table>
-
-        </div>
+    <div id="title" class="text-center mt-3">
+        <h1>Mon profil</h1>
     </div>
 
-    {% if utilisateur %}
-        <a href="{{ path('utilisateur_modification', { 'id': utilisateur.id }) }}">Modifier mon profil</a>
-    {% endif %}
+    <div class="container">
+        <div class="row d-flex justify-content-center mt-5">
+
+            <div class="col-md-8">
+                <table class="table">
+
+                    <div class="row g-3 align-items-center">
+
+                        <tbody>
+                        <tr>
+                            <th class="text-end">Campus :</th>
+                            <td>{{ utilisateur.campus.nom }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-end">Pseudo :</th>
+                            <td>{{ utilisateur.pseudo }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-end">Nom :</th>
+                            <td>{{ utilisateur.nom }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-end">Prénom :</th>
+                            <td>{{ utilisateur.prenom }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-end">Téléphone :</th>
+                            <td>{{ utilisateur.telephone }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-end">Adresse email :</th>
+                            <td>{{ utilisateur.email }}</td>
+                        </tr>
+
+                        </tbody>
+                    </div>
+                </table>
+
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            {% if utilisateur %}
+                <a href="{{ path('utilisateur_modification', { 'id': utilisateur.id }) }}"
+                   class="btn btn-primary d-inline-block">
+                    Modifier mon profil
+                </a>
+            {% endif %}
+        </div>
+
+    </div>
 
 {% endblock %}
 
