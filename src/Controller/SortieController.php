@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\DTO\RechercheSortie;
 use App\Entity\Etat;
 use App\Entity\Sortie;
 use App\Enum\EtatEnum;
 use App\Form\AnnulationSortieFormType;
+use App\Form\RechercheSortieFormType;
 use App\Form\SortieCreationModificationType;
 use App\Repository\CampusRepository;
 use App\Repository\EtatRepository;
@@ -13,7 +15,6 @@ use App\Repository\SortieRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -23,28 +24,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/sorties', name: 'sorties_')]
 class SortieController extends AbstractController
 {
-    #[Route('/', name: 'liste')]
-    public function montrerSorties(
-        SortieRepository $sortieRepository,
-        EtatRepository $etatRepository,
-        CampusRepository $campusRepository,
-        EntityManagerInterface $entityManager,
-    )
-    {
-        $campus = $campusRepository->findAll();
-        $sorties = $sortieRepository->findAll();
-        foreach ($sorties as $sortie) {
-            $sortie->verifierEtat($etatRepository);
-        }
-
-        $entityManager->flush();
-
-        return $this->render('sortie/index.html.twig', [
-            'title' => 'Liste des sorties',
-            'sorties' => $sorties,
-            'campus' => $campus,
-        ]);
-    }
 
     #[Route('/creer', name: 'creer', methods: ['GET', 'POST'])]
     public function creerSortie(

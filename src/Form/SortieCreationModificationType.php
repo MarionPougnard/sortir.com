@@ -3,15 +3,12 @@
 namespace App\Form;
 
 use App\Entity\Campus;
-use App\Entity\Etat;
 use App\Entity\Lieu;
 use App\Entity\Sortie;
-use App\Entity\Utilisateur;
 use App\Entity\Ville;
 use App\Repository\LieuRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -49,6 +46,7 @@ class SortieCreationModificationType extends AbstractType
                 'label'=>'Description et infos',
             ])
             ->add('campus', EntityType::class, [
+                'label' => 'Campus',
                 'class' => Campus::class,
                 'placeholder' => '-- Sélectionner un campus --',
                 'choice_label' => 'nom',
