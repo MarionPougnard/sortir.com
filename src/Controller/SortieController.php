@@ -7,6 +7,7 @@ use App\Entity\Sortie;
 use App\Enum\EtatEnum;
 use App\Form\AnnulationSortieFormType;
 use App\Form\SortieCreationModificationType;
+use App\Repository\CampusRepository;
 use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
 use DateTime;
@@ -24,9 +25,11 @@ class SortieController extends AbstractController
     public function montrerSorties(
         SortieRepository $sortieRepository,
         EtatRepository $etatRepository,
+        CampusRepository $campusRepository,
         EntityManagerInterface $entityManager,
     )
     {
+        $campus = $campusRepository->findAll();
         $sorties = $sortieRepository->findAll();
         foreach ($sorties as $sortie) {
             $sortie->verifierEtat($etatRepository);
@@ -37,6 +40,7 @@ class SortieController extends AbstractController
         return $this->render('sortie/index.html.twig', [
             'title' => 'Liste des sorties',
             'sorties' => $sorties,
+            'campus' => $campus,
         ]);
     }
 
