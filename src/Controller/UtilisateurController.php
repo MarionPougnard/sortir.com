@@ -52,7 +52,7 @@ class UtilisateurController extends AbstractController
                 $entityManager->persist($utilisateur);
                 $entityManager->flush();
 
-                return $this->redirectToRoute('utilisateur', [
+                return $this->redirectToRoute('utilisateur_profil', [
                     'id' => $utilisateur->getId(),
                 ]);
             }
