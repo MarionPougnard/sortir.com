@@ -46,7 +46,7 @@ class SortieController extends AbstractController
         ]);
     }
 
-    #[Route('/creerSortie', name: 'creerSortie', methods: ['GET', 'POST'])]
+    #[Route('/creer', name: 'creer', methods: ['GET', 'POST'])]
     public function creerSortie(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -88,7 +88,7 @@ class SortieController extends AbstractController
         ]);
     }
 
-    #[Route('/creerSortie/{id}', name: 'modification', methods: ['GET', 'POST'])]
+    #[Route('/{id}', name: 'modification', methods: ['GET', 'POST'])]
     public function modification(
         Request $request,
         Sortie $sortie,
@@ -112,7 +112,7 @@ class SortieController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'suppression', methods: ['POST'])]
+    #[Route('/{id}/supprimer', name: 'suppression', methods: ['POST'])]
     public function suppression(
         Request $request,
         Sortie $sortie,

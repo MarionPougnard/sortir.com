@@ -17,7 +17,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UtilisateurController extends AbstractController
 {
     // Route page profil utilisateur
-    #[Route('/{id}', name: 'utilisateur')]
+    #[Route('/profil', name: 'utilisateur')]
+    #[IsGranted('ROLE_ADMIN')]
     public function index(): Response
     {
         $utilisateur  = $this->getUser();
@@ -27,10 +28,7 @@ class UtilisateurController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    #[Route('/utilisateur/modification', name: 'utilisateur_modification')]
-    public function modificationProfil(): Response
-    // Route page modification profil utilisateur
-    #[Route('/{id}/modification', name: 'utilisateur_modification', methods: ['GET', 'POST'])]
+    #[Route('/{id<\d+>}/modification', name: 'utilisateur_modification', methods: ['GET', 'POST'])]
     public function modificationProfil(Request $request, Utilisateur $utilisateur, EntityManagerInterface $entityManager): Response
     {
           if ($this->getUser() == $utilisateur) {
@@ -69,7 +67,8 @@ class UtilisateurController extends AbstractController
 
     }
 
-    #[Route('/{id}', name: 'suppression_profil', methods: ['POST'])]
+    #[Route('{id<\d+>}/supprimer', name: 'suppression_profil', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function suppression_profil(
         Request $request,
         Utilisateur $utilisateur,

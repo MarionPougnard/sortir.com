@@ -134,11 +134,25 @@ class AppFixtures extends Fixture
             $user->setPrenom('user' . $i);
             $user->setTelephone('0123456789');
             $user->setEstActif(true);
+            $user->setRoles(['ROLE_USER']);
             $user->setPseudo('user' . $i);
             $user->setPassword($this->passwordHasher->hashPassword($user, '123456'));
             $user->setCampus($campus);
             $manager->persist($user);
         }
+
+        // Création d'un admin
+        $admin = new Utilisateur();
+        $admin->setEmail('admin@admin.com');
+        $admin->setNom('admin');
+        $admin->setPrenom('admin');
+        $admin->setTelephone('0123456789');
+        $admin->setEstActif(true);
+        $admin->setRoles(['ROLE_ADMIN']);
+        $admin->setPseudo('admin');
+        $admin->setPassword($this->passwordHasher->hashPassword($user, '123456'));
+        $admin->setCampus($campus);
+        $manager->persist($admin);
 
         // Creation Etat
         $etat1 = new Etat();
