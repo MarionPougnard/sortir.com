@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() ~ title }}
+{% endblock %}
+
+{% block body %}
+    <p>Nom de la sortie : {{ sortie.nom }}</p>
+    <p>Date et heure de début : {{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</p>
+    <p>Campus : {{ sortie.campus.nom }}</p>
+    <p>Lieu : {{ sortie.lieu.nom }}</p>
+    <p>Ville : {{ sortie.lieu.ville.nom }}</p>
+    {{ form_start(annulationSortieForm, {'method': 'POST'}) }}
+        {{ form_widget(annulationSortieForm) }}
+         <button type="submit" class="btn btn-secondary">Enregistrer</button>
+    {{ form_end(annulationSortieForm) }}
+
+{% endblock %}

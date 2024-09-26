@@ -16,41 +16,32 @@
                         <div class="col-6">
                             <div class="mb-4">
                                 {{ form_row(sortieform.nom, {'attr': {'class': "form-control"}}) }}
-                                {{ form_errors(sortieform.nom) }}
                             </div>
                             <div class="mb-4">
-                                {{ form_row(sortieform.dateHeureDebut, {'attr': {'class': "form-control"}}) }}
-                                {{ form_errors(sortieform.dateHeureDebut) }}
+                                {{ form_row(sortieform.dateHeureDebut) }}
                             </div>
                             <div class="mb-4">
-                                {{ form_row(sortieform.dateLimiteInscription, {'attr': {'class': "form-control"}}) }}
-                                {{ form_errors(sortieform.dateLimiteInscription) }}
+                                {{ form_row(sortieform.dateLimiteInscription, {'attr': {'class': "form-control", 'type': 'datetime-local'}}) }}
                             </div>
                             <div class="mb-4">
                                 {{ form_row(sortieform.nbInscriptionMax, {'attr': {'class': "form-control"}}) }}
-                                {{ form_errors(sortieform.nbInscriptionMax) }}
                             </div>
                             <div class="mb-4">
                                 {{ form_row(sortieform.duree, {'attr': {'class': "form-control"}}) }}
-                                {{ form_errors(sortieform.duree) }}
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="mb-4">
                                 {{ form_row(sortieform.campus, {'attr': {'class': "form-control"}}) }}
-                                {{ form_errors(sortieform.campus) }}
                             </div>
                             <div class="mb-4">
                                 {{ form_row(sortieform.ville, {'attr': {'class': "form-control"}}) }}
-                                {{ form_errors(sortieform.ville) }}
                             </div>
                             <div class="mb-4">
                                 {{ form_row(sortieform.lieu, {'attr': {'class': "form-control"}}) }}
-                                {{ form_errors(sortieform.lieu) }}
                             </div>
                             <div class="mb-4">
                                 {{ form_row(sortieform.rue, {'attr': {'class': "form-control"}}) }}
-                                {{ form_errors(sortieform.rue) }}
                             </div>
                             <div class="mb-4">
                                 <label for="latitude">Latitude / Longitude</label>
@@ -58,8 +49,6 @@
                                     {{ form_widget(sortieform.latitude, {'attr': {'class': 'form-control me-2'}}) }}
                                     {{ form_widget(sortieform.longitude, {'attr': {'class': 'form-control'}}) }}
                                 </div>
-                                {{ form_errors(sortieform.latitude) }}
-                                {{ form_errors(sortieform.longitude) }}
                             </div>
                         </div>
                     </div>
@@ -94,50 +83,56 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const villeSelect = document.querySelector('select[name="sortie[ville]"]');
-            const lieuSelect = document.querySelector('select[name="sortie[lieu]"]');
-            const latitudeInput = document.querySelector('input[name="latitude"]');
-            const longitudeInput = document.querySelector('input[name="longitude"]');
-            const rueInput = document.querySelector('input[name="rue"]');
+        document.getElementById('{{ sortieform.ville.vars.id }}').addEventListener('change', function () {
+            let villeId = this.value;
+            let lieuSelect = document.getElementById('{{ sortieform.lieu.vars.id }}');
 
-            villeSelect.addEventListener('change', function () {
-                const villeId = this.value;
+            // Effacer les options actuelles du lieu
+            lieuSelect.innerHTML = '<option value="">-- Sélectionner un lieu --</option>';
+            document.getElementById('{{ sortieform.rue.vars.id }}').value = '';
+            document.getElementById('{{ sortieform.latitude.vars.id }}').value = '';
+            document.getElementById('{{ sortieform.longitude.vars.id }}').value = '';
 
-                // Réinitialiser le champ des lieux
-                lieuSelect.innerHTML = '<option value=""></option>';
-                latitudeInput.value = '';
-                longitudeInput.value = '';
-                rueInput.value = '';
+            // Si aucune ville n'est sélectionnée, ne pas faire la requête
+            if (!villeId) {
+                return;
+            }
 
+            // Requête AJAX pour récupérer les lieux en fonction de la ville sélectionnée
+            fetch(`/lieux/${villeId}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(lieu => {
+                        let option = document.createElement('option');
+                        option.value = lieu.id;
+                        option.text = lieu.nom;
+                        lieuSelect.add(option);
+                    });
+                })
+                .catch(error => console.error('Erreur lors de la récupération des lieux:', error));
+        });
 
-                if (villeId) {
-                    fetch(`/lieux/${villeId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            data.forEach(lieu => {
-                                const option = document.createElement('option');
-                                option.value = lieu.id;
-                                option.textContent = lieu.nom;
-                                lieuSelect.appendChild(option);
-                            });
-                        });
-                }
-            });
+        // Event listener for lieu selection to fill in rue, latitude, and longitude
+        document.getElementById('{{ sortieform.lieu.vars.id }}').addEventListener('change', function () {
+            let lieuId = this.value;
 
-            lieuSelect.addEventListener('change', function () {
-                const lieuId = this.value;
+            // If no lieu is selected, clear the fields
+            if (!lieuId) {
+                document.getElementById('{{ sortieform.rue.vars.id }}').value = '';
+                document.getElementById('{{ sortieform.latitude.vars.id }}').value = '';
+                document.getElementById('{{ sortieform.longitude.vars.id }}').value = '';
+                return;
+            }
 
-                if (lieuId) {
-                    fetch(`/lieu/${lieuId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            rueInput.value = data.rue;
-                            latitudeInput.value = data.latitude;
-                            longitudeInput.value = data.longitude;
-                        });
-                }
-            });
+            // AJAX request to get the details of the selected lieu
+            fetch(`/lieu/details/${lieuId}`)
+                .then(response => response.json())
+                .then(lieu => {
+                    document.getElementById('{{ sortieform.rue.vars.id }}').value = lieu.rue;
+                    document.getElementById('{{ sortieform.latitude.vars.id }}').value = lieu.latitude;
+                    document.getElementById('{{ sortieform.longitude.vars.id }}').value = lieu.longitude;
+                })
+                .catch(error => console.error('Erreur lors de la récupération des détails du lieu:', error));
         });
     </script>
 

@@ -20,12 +20,12 @@ class Etat
 
     #[ORM\Column(type: 'string')]
     #[Assert\Choice(callback: [EtatEnum::class, 'values'])]
-    private EtatEnum $libelle;
+    private string $libelle;
 
     /**
      * @var Collection<int, Sortie>
      */
-    #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'Etat')]
+    #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'etat')]
     private Collection $sorties;
 
     public function __construct()
@@ -40,15 +40,12 @@ class Etat
 
     public function getLibelle(): EtatEnum
     {
-        return $this->libelle;
+        return EtatEnum::from($this->libelle);
     }
 
     public function setLibelle(EtatEnum $libelle): void
     {
-        if (!EtatEnum::tryFrom($libelle)) {
-            throw new \InvalidArgumentException("Le libellé n'est pas valide");
-        }
-        $this->libelle = $libelle;
+        $this->libelle = $libelle->value;
     }
 
     /**
