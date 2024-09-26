@@ -18,7 +18,7 @@ class UtilisateurController extends AbstractController
 {
     // Route page profil utilisateur
     #[Route('/profil', name: 'utilisateur')]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_USER')]
     public function index(): Response
     {
         $utilisateur  = $this->getUser();
