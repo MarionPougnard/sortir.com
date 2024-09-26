@@ -1,5 +1,6 @@
 body {
     min-height: 100vh;
+    margin: 0;
     display: flex;
     flex-direction: column;
     background-image: linear-gradient(
@@ -12,8 +13,10 @@ body {
     background-size: cover;
 }
 
+
+
 header {
-    padding: 10px 0 10px 0;
+    padding: 10px 30px 10px 30px;
     background-color: #FFFCF5;
 }
 
@@ -21,10 +24,6 @@ header .container {
     position: relative;
     display: flex;
     flex-direction: column;
-}
-
-header h1 {
-    font-size: 1.4rem;
 }
 
 header a {
@@ -37,30 +36,12 @@ header > div {
     align-items: baseline;
 }
 
-header .main-nav {
-    display: flex;
-    flex-direction: column;
-    align-items: baseline;
-}
-
-header .main-nav a {
-    margin-right: 20px;
-}
-
-header .main-nav a:hover {
-    color: #ffc107;
-}
-
-header .main-nav h1 {
-    margin: 0 30px 0 0;
-}
-
 header img {
     display: none;
     height: 70px;
     position: absolute;
     top: -6px;
-    left: -7px;
+    left: 30px;
     transform: rotate(15deg);
     transition: all 300ms;
 }
@@ -69,13 +50,23 @@ header .home-main-link:hover img {
     transform: rotate(-10deg);
 }
 
-header .user-nav {
-    display: flex;
-    flex-direction: column;
+.navbar-brand {
+    margin-left: 100px;
+    color : #4CB24A;
+    font-size : 25px;
 }
 
-header .user-nav a {
-    margin-left: 0;
+.navbar-brand:hover {
+    color : #FFAA00;
+}
+
+.nav-link {
+    color : #4CB24A;
+    font-size: 20px;
+}
+
+.nav-link:hover {
+    color : #FFAA00;
 }
 
 main {
@@ -84,9 +75,12 @@ main {
 }
 
 footer {
-    padding: 40px 0;
-    text-align:center;
     background-color: #FFFCF5;
+    color : #4CB24A;
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+    position: relative;
 }
 
 .footer-logo {
@@ -149,17 +143,6 @@ footer:hover .footer-logo {
 
 ul.pagination {
     justify-content: center;
-}
-
-.event-filters-checkboxes {
-}
-
-.event-filters-checkboxes .form-group {
-    margin-bottom: 0;
-}
-
-.event-table {
-    font-size: 0.9rem;
 }
 
 @media screen and (min-width: 800px) {

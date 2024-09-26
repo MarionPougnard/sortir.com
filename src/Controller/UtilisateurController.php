@@ -17,7 +17,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UtilisateurController extends AbstractController
 {
     // Route page profil utilisateur
-    #[Route('/profil', name: 'utilisateur')]
+    #[Route('/profil', name: 'utilisateur_profil')]
     #[IsGranted('ROLE_USER')]
     public function index(): Response
     {
