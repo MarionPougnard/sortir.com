@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -24,17 +25,15 @@ class Sortie
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Assert\NotBlank(message: "La date et l'heure sont requises")]
-    #[Assert\DateTime]
     private ?\DateTimeInterface $dateHeureDebut = null;
 
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    #[ORM\Column(length: 7)]
     #[Assert\NotBlank(message: "La durée est requise")]
     #[Assert\Positive(message: 'La durée doit être positive')]
-    private ?\DateTimeInterface $duree = null;
+    private ?int $duree = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Assert\NotBlank(message: "La date limite d'inscription est requise")]
-    #[Assert\DateTime]
     private ?\DateTimeInterface $dateLimiteInscription = null;
 
     #[ORM\Column]
@@ -48,7 +47,7 @@ class Sortie
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Etat $Etat = null;
+    private ?Etat $etat = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
@@ -56,7 +55,7 @@ class Sortie
 
     #[ORM\ManyToOne(inversedBy: 'sortiesOrganisees')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Utilisateur $Organisateur = null;
+    private ?Utilisateur $organisateur = null;
 
     /**
      * @var Collection<int, Utilisateur>
@@ -67,6 +66,10 @@ class Sortie
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Lieu $lieu = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $motifAnnulation = null;
+
 
     public function __construct()
     {
@@ -103,12 +106,12 @@ class Sortie
         return $this;
     }
 
-    public function getDuree(): ?\DateTimeInterface
+    public function getDuree(): ?int
     {
         return $this->duree;
     }
 
-    public function setDuree(\DateTimeInterface $duree): static
+    public function setDuree(int $duree): static
     {
         $this->duree = $duree;
 
@@ -153,12 +156,12 @@ class Sortie
 
     public function getEtat(): ?Etat
     {
-        return $this->Etat;
+        return $this->etat;
     }
 
-    public function setEtat(?Etat $Etat): static
+    public function setEtat(?Etat $etat): static
     {
-        $this->Etat = $Etat;
+        $this->etat = $etat;
 
         return $this;
     }
@@ -177,12 +180,13 @@ class Sortie
 
     public function getOrganisateur(): ?Utilisateur
     {
-        return $this->Organisateur;
+        return $this->organisateur;
     }
 
-    public function setOrganisateur(?Utilisateur $Organisateur): static
+    public function setOrganisateur(?Utilisateur $organisateur): static
     {
-        $this->Organisateur = $Organisateur;
+        $this->organisateur = $organisateur;
+
 
         return $this;
     }
@@ -226,4 +230,53 @@ class Sortie
         return $this;
     }
 
+    public function getMotifAnnulation(): ?string
+    {
+        return $this->motifAnnulation;
+    }
+
+    public function setMotifAnnulation(?string $motifAnnulation): static
+    {
+        $this->motifAnnulation = $motifAnnulation;
+
+        return $this;
+    }
+
+    public function verifierEtat(EtatRepository $etatRepository): void {
+        $now = new \DateTime();
+        $dateFin = (clone $this->dateHeureDebut)->modify("+{$this->duree} minutes");
+        $dateHistorisation = (clone $dateFin)->modify('+1 month');
+
+        if ($this->etat && $this->etat->getLibelle() == 'Ouverte') {
+            $nbParticipants = count($this->participants);
+
+            $isMaxParticipantsAtteint = $nbParticipants >= $this->nbInscriptionMax;
+            $isDateLimiteDepassee = $now >= $this->dateLimiteInscription;
+
+            if ($isMaxParticipantsAtteint || $isDateLimiteDepassee) {
+                $etatCloture = $etatRepository->findOneBy(['libelle' => 'Clôturée']);
+
+                if ($etatCloture) {
+                    $this->setEtat($etatCloture);
+                }
+            }
+        }
+
+        if ($this->etat && $this->etat->getLibelle() == 'Clôturée' && $now >= $this->dateHeureDebut) {
+            $etatEnCours = $etatRepository->findOneBy(['libelle' => 'En cours']);
+            $this->setEtat($etatEnCours);
+        }
+
+        if ($this->etat && $this->etat->getLibelle() == 'En cours' && $now >= $dateFin) {
+            $etatTerminee = $etatRepository->findOneBy(['libelle' => 'Terminée']);
+            $this->setEtat($etatTerminee);
+        }
+
+        if ($this->etat && $this->etat->getLibelle() == 'Terminée' && $now > $dateHistorisation) {
+            $etatHistorisee = $etatRepository->findOneBy(['libelle' => 'Historisée']);
+            $this->setEtat($etatHistorisee);
+        }
+    }
+
 }
+
