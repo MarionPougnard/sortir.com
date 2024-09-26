@@ -4,12 +4,28 @@
 
 {% block body %}
     <div class="container mt-4">
-        <div class="d-flex justify-content-end">
-            <div class="text-end">
-                <p>Date du jour : </p><p id="date-du-jour"></p>
-                <p>Participant : </p>{#{{ utilisateur.pseudo }}#}
+        <div class="row d-flex justify-content-end">
+            <div class="col-sm-11 text-end">
+                <p>Date du jour : </p>
+            </div>
+            <div class="col-sm-1">
+                {{ "now"|date("d/m/Y") }}
+            </div>
+        </div>
+
+        <div class="row d-flex justify-content-end">
+            <div class="col-sm-11 text-end">
+                <p>Participant : </p>
+            </div>
+            <div class="col-sm-1">
+                {{ utilisateur.pseudo }}
             </div>
         </div>
     </div>
+
+    <div class="container mt-4">
+        <h3>Filtrer les sorties</h3>
+    </div>
+
 
 {% endblock %}

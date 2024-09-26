@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div id="title" class="text-center mt-3">
+        <h1>Gérer les utilisateurs</h1>
+    </div>
+
+    <div class="container">
+        <div class="row d-flex justify-content-center mt-5">
+
+            <div class="col-md-8">
+                <table class="table table-striped">
+
+                    <div class="row g-3 align-items-center">
+
+                        <tbody>
+                        <tr>
+                            <th class="text-end">Campus :</th>
+                            <td>{{ utilisateur.campus.nom }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-end">Pseudo :</th>
+                            <td>{{ utilisateur.pseudo }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-end">Nom :</th>
+                            <td>{{ utilisateur.nom }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-end">Prénom :</th>
+                            <td>{{ utilisateur.prenom }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-end">Téléphone :</th>
+                            <td>{{ utilisateur.telephone }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-end">Adresse email :</th>
+                            <td>{{ utilisateur.email }}</td>
+                        </tr>
+
+                        </tbody>
+                    </div>
+                </table>
+
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            {% if utilisateur %}
+                <a href="{{ path('utilisateur_modification', { 'id': utilisateur.id }) }}"
+                   class="btn btn-primary d-inline-block">
+                    Modifier mon profil
+                </a>
+            {% endif %}
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block title %}Profil de {{ utilisateur.pseudo }} {% endblock %}

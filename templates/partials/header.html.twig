@@ -1,23 +1,46 @@
 <header>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/"><img src="{{ asset('img/logo_sortir_eni.png') }}" alt="sortir.com logo"><h1>Sortir.com</h1></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="{{ path('app_accueil') }}"><img src="{{ asset('img/logo_sortir_eni.png') }}"
+                                                                          alt="sortir.com logo">Sortir.com</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-          {#  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                    <a class="nav-link active" aria-current="page" href="/accueil">Accueil</a>
-                    <a class="nav-link" href="{{ path('utilisateur_profil') }}">Mon profil</a>
-                    <a class="nav-link" href="{{ path('security_logout') }}">Déconnexion</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
 
-                    #}{# {% else %} #}{#
-                    <a class="nav-link" href="{{ path('security_login') }}">Connexion</a>
-                    }#}{# @TODO: show only to admin #}{##}{#
-                    <a href="{{ path('admin_user_create') }}">Créer un compte</a>
-                {% endif %} #}{#
-                    <a class="nav-link" href="{{ path('security_login') }}">Connexion</a>
-                </div>#}
+                    <!-- Lien Accueil -->
+                    <li class="nav-item">
+                        <a class="nav-link mx-3" href="{{ path('app_accueil') }}">Accueil</a>
+                    </li>
+
+                    <!-- Lien Administration (Visible uniquement pour les administrateurs) -->
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <li class="nav-item">
+                            <a class="nav-link mx-3" href="{{ path('app_admin') }}">Administration</a>
+                        </li>
+                    {% endif %}
+
+                    <!-- Lien Mon profil (Visible uniquement si l'utilisateur est connecté) -->
+                    {% if app.user %}
+                        <li class="nav-item">
+                            <a class="nav-link mx-3" href="{{ path('utilisateur_profil') }}">Mon
+                                profil</a>
+                        </li>
+
+                        <!-- Lien Se déconnecter -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_logout') }}">Se déconnecter</a>
+                        </li>
+                    {% else %}
+
+                        <!-- Lien Se connecter (Visible si l'utilisateur n'est pas connecté) -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_login') }}">Se connecter</a>
+                        </li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
     </nav>
