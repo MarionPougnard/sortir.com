@@ -18,7 +18,7 @@
                     <!-- Lien Administration (Visible uniquement pour les administrateurs) -->
                     {% if is_granted('ROLE_ADMIN') %}
                         <li class="nav-item">
-                            <a class="nav-link mx-3" {#href="{{ path('admin_dashboard') }}"#}>Administration</a>
+                            <a class="nav-link mx-3" href="{{ path('app_admin') }}">Administration</a>
                         </li>
                     {% endif %}
 
