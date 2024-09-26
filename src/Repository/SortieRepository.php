@@ -31,9 +31,15 @@ class SortieRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function chercheSortieAvecFiltre(RechercheSortie $filtres, UserInterface $utilisateur)
+    public function chercheSortieAvecFiltre(RechercheSortie $filtres, EtatRepository $etatRepository, UserInterface $utilisateur)
     {
         $queryBuilder = $this->createQueryBuilder('s');
+
+        $etatHistorisee = $this->etatRepository->findByLibelle('Historisée');
+        if ($etatHistorisee) {
+            $queryBuilder->andWhere('s.etat != :etatHistorisee')
+                ->setParameter('etatHistorisee', $etatHistorisee->getId());
+        }
 
         if (isset($filtres->search) && $filtres->search) {
             $queryBuilder->andWhere('s.nom LIKE :search')
