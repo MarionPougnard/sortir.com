@@ -12,23 +12,4 @@
         </div>
     </div>
 
-
-
-    <div class="row">
-{#        <div class="col-sm-4">
-            <div id="profile_pic">
-                {% if app.user.picture %}
-                    <img src="{{ asset('uploads/profiles/'~app.user.picture) }}" alt="{{ app.user.firstname }} {{ app.user.lastname }}">
-                {% else %}
-                    <img src="{{ asset('img/default_profil.png') }}" alt="Photo par défaut">
-                {% endif %}
-            </div>
-            <a href="{{ path('utilisateur_telecharger') }}">Changer ma photo</a><br>
-            <a href="{{ path('utilisateur_modification_password') }}">Modifier mon mot de passe</a>
-
-        </div>
-        <div class="col-sm-8">
-            {{ form(registrationForm) }}
-        </div>#}
-    </div>
 {% endblock %}
