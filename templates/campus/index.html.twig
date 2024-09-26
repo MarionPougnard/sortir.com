@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Les campus :){% endblock %}
+
+{% block body %}
+    <div class="container w-75">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Campus</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for campus in allCampus %}
+                <tr class="align-middle">
+                    <td>{{ campus.nom }}</td>
+                    <td>
+                        <div class="d-flex">
+                            <form method="POST" action="{{ path('campus_modification', {'id': campus.id }) }}" class="me-5">
+                                <button class="btn btn-success px-4k" type="submit">Modifier</button>
+                            </form>
+                            <form method="POST" action="{{ path('suppression_campus', {'id': campus.id }) }}">
+                                <button class="btn btn-danger px-4k" type="submit">Supprimer</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
