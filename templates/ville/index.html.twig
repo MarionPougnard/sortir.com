@@ -1,53 +1,49 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ville{% endblock %}
+{% block title %}Les ville :){% endblock %}
 
 {% block body %}
-    <h1>Gérer les villes</h1>
-
-    <div class="container mt-4">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card p-4">
-                    <h5 class="card-title text-center">Filtrer les Villes</h5>
-                    <div class="input-group">
-                        <!-- Zone de saisie pour rechercher une ville -->
-                        <input type="text" class="form-control" id="ville" placeholder="Saisir une ville" aria-label="Saisir une ville">
-                        <!-- Bouton Rechercher -->
-                        <button class="btn btn-primary" type="button" id="btn-rechercher">Rechercher</button>
-                    </div>
-                </div>
-            </div>
+    <div class="container w-50">
+        <h1 class="m-5 text-center">Gérer les villes</h1>
+        <div style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-striped">
+                <thead style="position: sticky; top: 0; background-color: white; z-index: 1
+ ">
+                <tr>
+                    <th class="ps-5">Ville</th>
+                    <th class="ps-5">Code Postal</th>
+                    <th class="text-center">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for ville in allVilles %}
+                    <tr class="align-middle">
+                        <td class="ps-5" style="white-space: nowrap;">{{ ville.nom }}</td>
+                        <td class="ps-5" style="white-space: nowrap;">{{ ville.codePostal }}</td>
+                        <td class="w-50">
+                            <div class="d-flex justify-content-end">
+                                <form method="POST" action="{{ path('ville_modification', {'id': ville.id }) }}" class="me-5">
+                                    <button class="btn btn-success px-4k" type="submit">Modifier</button>
+                                </form>
+                                <form method="POST" action="{{ path('suppression_ville', {'id': ville.id }) }}"
+                                      onsubmit="return confirm('Voulez-vous vraiment supprimer cette ville ?')">
+                                    <button class="btn btn-danger px-4k" type="submit">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
+
+        <div class="d-flex justify-content-end mt-5">
+            <a href="javascript:history.back()" class="btn btn-secondary me-3">Retour</a>
+            <form method="POST" action="{{ path('ajouter_ville') }}">
+                <button class="btn btn-success px-4k" type="submit">Ajouter</button>
+            </form>
+        </div>
+
     </div>
 
-    <table class="table table-striped, justify-content-center, w-auto">
-
-        <thead>
-        <tr>
-            <th scope="col">Ville</th>
-            <th scope="col">Code postal</th>
-            <th scope="col">Actions</th>
-        </tr>
-        </thead>
-
-{#        <tbody>
-        {% for ville in villes %}
-            <tr>
-                <td>{{ ville.nom }}</td>
-                <td>{{ ville.codePostal }}</td>
-                <td>
-                    <a href="{{ path('ville_modification', {'id': ville.id}) }}">Modifier</a>
-                    <a href="{{ path('ville_suppression', {'id': ville.id}) }}">Supprimer</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>#}
-    </table>
-
-{#    <a href="{{ path('ville_creation') }}">Ajouter</a>#}
 {% endblock %}
