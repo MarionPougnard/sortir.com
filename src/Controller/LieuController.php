@@ -27,14 +27,6 @@ class LieuController extends AbstractController
             $lieuxArray[] = [
                 'id' => $lieu->getId(),
                 'nom' => $lieu->getNom(),
-                'rue' => $lieu->getRue(),
-                'latitude' => $lieu->getLatitude(),
-                'longitude' => $lieu->getLongitude(),
-                'ville' => [
-                    'id' => $ville->getId(),
-                    'nom' => $ville->getNom(),
-                    'codePostal' => $ville->getCodePostal(),
-                ]
             ];
         }
 
@@ -54,6 +46,7 @@ class LieuController extends AbstractController
             'rue' => $lieu->getRue(),
             'latitude' => $lieu->getLatitude(),
             'longitude' => $lieu->getLongitude(),
+            'ville' => $lieu->getVille()?->getid(),
         ]);
     }
 }

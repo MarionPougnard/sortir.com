@@ -12,6 +12,7 @@
             <div class="col-lg-12 col-xl-12">
                 <div class="text-black" style="border-radius: 25px;">
                     {{ form_start(sortieform, {'attr': {'class': "mx-1 mx-md-4 needs-validation was-validated"}}) }}
+
                     <div class="row">
                         <div class="col-6">
                             <div class="mb-4">
@@ -56,26 +57,32 @@
                         <div class="col-12 mb-4">
                             <div class="form-outline">
                                 {{ form_row(sortieform.infosSortie, {'attr': {'class': "form-control"}}) }}
-                                {{ form_errors(sortieform.infosSortie) }}
                             </div>
                         </div>
                     </div>
+
                     <div class="d-flex justify-content-center">
                         <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                            <button type="submit" name="action" value="enregistrer" class="btn btn-outline-primary">Enregistrer</button>
+                            <button type="submit" name="action" value="enregistrer" class="btn btn-primary">Enregistrer</button>
                         </div>
                         <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                            <button type="submit" name="action" value="publier" class="btn btn-outline-warning">Publier</button>
+                            <button type="submit" name="action" value="publier" class="btn btn-warning">Publier</button>
                         </div>
-                        {% if sortie is not null %}
-                        <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                            <button type="submit" name="action" value="supprimer" class="btn btn-outline-warning">Supprimer</button>
-                        </div>
+
+                        {% if sortie is not null and sortie.id is not null %}
+                            <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                                <a href="{{ path('sorties_supprimer', { id: sortie.id }) }}" class="btn btn-danger"
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette sortie ?');">
+                                    Supprimer
+                                </a>
+                            </div>
                         {% endif %}
+
                         <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                            <a class="btn btn-outline-info" href="{{ path('sorties_liste') }}">Retour à la liste</a>
+                            <a class="btn btn-info" href="{{ path('app_accueil') }}">Retour à la liste</a>
                         </div>
                     </div>
+
                     {{ form_end(sortieform) }}
                 </div>
             </div>
@@ -83,56 +90,59 @@
     </div>
 
     <script>
-        document.getElementById('{{ sortieform.ville.vars.id }}').addEventListener('change', function () {
-            let villeId = this.value;
-            let lieuSelect = document.getElementById('{{ sortieform.lieu.vars.id }}');
+        document.addEventListener('DOMContentLoaded', function () {
+            const lieuSelect = document.getElementById('{{ sortieform.lieu.vars.id }}');
+            const villeSelect = document.getElementById('{{ sortieform.ville.vars.id }}');
 
-            // Effacer les options actuelles du lieu
-            lieuSelect.innerHTML = '<option value="">-- Sélectionner un lieu --</option>';
-            document.getElementById('{{ sortieform.rue.vars.id }}').value = '';
-            document.getElementById('{{ sortieform.latitude.vars.id }}').value = '';
-            document.getElementById('{{ sortieform.longitude.vars.id }}').value = '';
-
-            // Si aucune ville n'est sélectionnée, ne pas faire la requête
-            if (!villeId) {
-                return;
+            if (lieuSelect.value) {
+                fetchLieuDetails(lieuSelect.value);
             }
 
-            // Requête AJAX pour récupérer les lieux en fonction de la ville sélectionnée
-            fetch(`/lieux/${villeId}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(lieu => {
-                        let option = document.createElement('option');
-                        option.value = lieu.id;
-                        option.text = lieu.nom;
-                        lieuSelect.add(option);
-                    });
-                })
-                .catch(error => console.error('Erreur lors de la récupération des lieux:', error));
-        });
+            lieuSelect.addEventListener('change', function () {
+                const lieuId = this.value;
 
-        // Event listener for lieu selection to fill in rue, latitude, and longitude
-        document.getElementById('{{ sortieform.lieu.vars.id }}').addEventListener('change', function () {
-            let lieuId = this.value;
+                if (lieuId) {
+                    fetchLieuDetails(lieuId);
+                } else {
+                    document.getElementById('{{ sortieform.rue.vars.id }}').value = '';
+                    document.getElementById('{{ sortieform.latitude.vars.id }}').value = '';
+                    document.getElementById('{{ sortieform.longitude.vars.id }}').value = '';
+                }
+            });
 
-            // If no lieu is selected, clear the fields
-            if (!lieuId) {
-                document.getElementById('{{ sortieform.rue.vars.id }}').value = '';
-                document.getElementById('{{ sortieform.latitude.vars.id }}').value = '';
-                document.getElementById('{{ sortieform.longitude.vars.id }}').value = '';
-                return;
+            villeSelect.addEventListener('change', function () {
+                const ville = this.value;
+
+                fetch(`/lieux/${ville}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        lieuSelect.innerHTML = '<option value="">-- Sélectionner un lieu --</option>';
+                        data.forEach(lieu => {
+                            const option = document.createElement('option');
+                            option.value = lieu.id;
+                            option.textContent = lieu.nom;
+                            lieuSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Erreur lors de la récupération des lieux:', error));
+            });
+
+            function fetchLieuDetails(lieuId) {
+                fetch(`/lieu/details/${lieuId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur de réseau');
+                        }
+                        return response.json();
+                    })
+                    .then(lieu => {
+                        document.getElementById('{{ sortieform.rue.vars.id }}').value = lieu.rue;
+                        document.getElementById('{{ sortieform.latitude.vars.id }}').value = lieu.latitude;
+                        document.getElementById('{{ sortieform.longitude.vars.id }}').value = lieu.longitude;
+                        villeSelect.value = lieu.ville; // Remplir la ville ici
+                    })
+                    .catch(error => console.error('Erreur lors de la récupération des détails du lieu:', error));
             }
-
-            // AJAX request to get the details of the selected lieu
-            fetch(`/lieu/details/${lieuId}`)
-                .then(response => response.json())
-                .then(lieu => {
-                    document.getElementById('{{ sortieform.rue.vars.id }}').value = lieu.rue;
-                    document.getElementById('{{ sortieform.latitude.vars.id }}').value = lieu.latitude;
-                    document.getElementById('{{ sortieform.longitude.vars.id }}').value = lieu.longitude;
-                })
-                .catch(error => console.error('Erreur lors de la récupération des détails du lieu:', error));
         });
     </script>
 

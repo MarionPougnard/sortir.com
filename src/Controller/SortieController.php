@@ -2,17 +2,12 @@
 
 namespace App\Controller;
 
-use App\DTO\RechercheSortie;
 use App\Entity\Etat;
 use App\Entity\Sortie;
 use App\Enum\EtatEnum;
 use App\Form\AnnulationSortieFormType;
-use App\Form\RechercheSortieFormType;
 use App\Form\SortieCreationModificationType;
-use App\Repository\CampusRepository;
-use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
-use App\Repository\UtilisateurRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-//#[IsGranted('ROLE_USER')]
+#[IsGranted('ROLE_USER')]
 #[Route('/sorties', name: 'sorties_')]
 class SortieController extends AbstractController
 {
@@ -30,10 +25,10 @@ class SortieController extends AbstractController
         SortieRepository $sortieRepository,
         int $id =null
     ): Response {
-        /*$user = $this->getUser();
+        $user = $this->getUser();
         if (!$user) {
             return $this->redirectToRoute('app_login');
-        }*/
+        }
 
         $sortie = $sortieRepository->find($id);
 
@@ -46,20 +41,80 @@ class SortieController extends AbstractController
     }
 
     #[Route('/creer', name: 'creer', methods: ['GET', 'POST'])]
-    public function creerSortie(
+    #[Route('/{id<\d+>}/modifier', name: 'modifier', methods: ['GET', 'POST'])]
+    public function creerOuModifierSortie(
         Request $request,
         EntityManagerInterface $entityManager,
+        ?Sortie $sortie = null,
     ): Response
     {
-        $sortie = new Sortie();
-        $organisateur = $this->getUser();
-        $sortie->setOrganisateur($organisateur);
+        if ($sortie === null) {
+            $sortie = new Sortie();
+            $organisateur = $this->getUser();
+            $sortie->setOrganisateur($organisateur);
+        } else {
+            $organisateur = $this->getUser();
+            if ($sortie->getOrganisateur() !== $organisateur) {
+                $this->addFlash('error', 'Vous ne pouvez pas modifier cette sortie car vous n\'en êtes pas l\'organisateur.');
+                return $this->redirectToRoute('app_accueil');
+            }
+            if ($sortie->getEtat()->getLibelle() !== EtatEnum::EN_CREATION) {
+                $this->addFlash('error', 'Vous ne pouvez pas modifier cette sortie car elle n\'est plus en création.');
+                return $this->redirectToRoute('app_accueil');
+            }
+        }
+
         $form = $this->createForm(SortieCreationModificationType::class, $sortie);
+
+        if ($sortie->getLieu()) {
+            $ville = $sortie->getLieu()->getVille();
+            $form->get('ville')->setData($ville);
+        }
 
         $form->handleRequest($request);
 
         $action = $request->get('action');
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            $etatRepo = $entityManager->getRepository(Etat::class);
+            if ($action === 'enregistrer') {
+                $etat = $etatRepo->findOneBy(['libelle' => EtatEnum::EN_CREATION]);
+                $sortie->setEtat($etat);
+                $message = 'La sortie a bien été enregistrée.';
+            }
+            if ($action === 'publier') {
+                $etat = $etatRepo->findOneBy(['libelle' => EtatEnum::OUVERTE]);
+                $sortie->setEtat($etat);
+                $message = 'La sortie a bien été publiée.';
+            }
+            try {
+                $entityManager->persist($sortie);
+                $entityManager->flush();
+                $this->addFlash('success', $message);
+            } catch (\Exception $exception) {
+                $this->addFlash('error', 'Une erreur est survenue lors de l\'enregistrement de la sortie : ' . $exception->getMessage());
+            }
+
+
+            return $this->redirectToRoute('app_accueil');
+        }
+        return $this->render('sortie/creerSortie.html.twig', [
+            'sortieform' => $form->createView(),
+            'title' => $sortie->getId() ? 'Modifier une sortie' : 'Créer une sortie',
+            'sortie' => $sortie
+        ]);
+    }
+
+    /*#[Route('/{id<\d+>}/modifier', name: 'modification', methods: ['GET', 'POST'])]
+    public function modification(
+        Request $request,
+        Sortie $sortie,
+        EntityManagerInterface $entityManager)
+    {
+        $form = $this->createForm(SortieCreationModificationType::class, $sortie);
+        $form->handleRequest($request);
+
+        $action = $request->get('action');
         if ($form->isSubmitted() && $form->isValid()) {
             if ($action === 'enregistrer') {
                 $etat = $entityManager->getRepository(Etat::class)->findOneBy(['libelle' => EtatEnum::EN_CREATION]);
@@ -76,32 +131,7 @@ class SortieController extends AbstractController
             } catch (\Exception $exception) {
                 $this->addFlash('error', 'Une erreur est survenue lors de l\'enregistrement de la sortie : ' . $exception->getMessage());
             }
-
-
-            return $this->redirectToRoute('sorties_liste');
-        }
-        return $this->render('sortie/creerSortie.html.twig', [
-            'sortieform' => $form->createView(),
-            'title' => 'Créer une sortie',
-            'sortie' => null
-        ]);
-    }
-
-    #[Route('/{id}', name: 'modification', methods: ['GET', 'POST'])]
-    public function modification(
-        Request $request,
-        Sortie $sortie,
-        EntityManagerInterface $entityManager)
-    {
-        $form = $this->createForm(SortieCreationModificationType::class, $sortie);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $entityManager->persist($sortie);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('sorties_liste');
+            return $this->redirectToRoute('app_accueil');
         }
 
         return $this->render('sortie/creerSortie.html.twig', [
@@ -109,21 +139,18 @@ class SortieController extends AbstractController
             'sortie' => $sortie,
             'title' => 'Modifier une sortie',
         ]);
-    }
+    }*/
 
-    #[Route('/{id}/supprimer', name: 'suppression', methods: ['POST'])]
+    #[Route('/{id<\d+>}/supprimer', name: 'supprimer', methods: ['GET','POST'])]
     public function suppression(
-        Request $request,
         Sortie $sortie,
         EntityManagerInterface $entityManager
     ): Response {
-        if ($this->isCsrfTokenValid('delete'.$sortie->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($sortie);
-            $entityManager->flush();
-            $this->addFlash('success', 'La sortie a bien été supprimée');
-        }
+        $entityManager->remove($sortie);
+        $entityManager->flush();
+        $this->addFlash('success', 'La sortie a bien été supprimée');
 
-        return $this->redirectToRoute('sorties_liste');
+        return $this->redirectToRoute('app_accueil');
     }
 
     #[Route('/{id}/annuler', name: 'annuler', methods: ['GET', 'POST'])]
@@ -134,10 +161,10 @@ class SortieController extends AbstractController
 
     ): Response
     {
-        /*$user = $this->getUser();
+        $user = $this->getUser();
         if ($user !== $sortie->getOrganisateur()) {
-            return new JsonResponse(['message' => 'Vous n\'êtes pas autorisé à annuler cette sortie.'], JsonResponse::HTTP_FORBIDDEN);
-        }*/
+           $this->addFlash('error', 'Vous n\'êtes pas autorisé à annuler cette sortie.');
+        }
         $etatAnnule = $entityManager->getRepository(Etat::class)->findOneBy(['libelle' => 'Annulée']);
 
         $annulationSortieForm = $this->createForm(AnnulationSortieFormType::class, $sortie);
@@ -152,7 +179,7 @@ class SortieController extends AbstractController
 
             $this->addFlash('success', 'L\'annulation de la sortie a bien été enregistrée');
 
-            return $this->redirectToRoute('sorties_liste');
+            return $this->redirectToRoute('app_accueil');
         }
 
         return $this->render('sortie/annulerSortie.html.twig', [
