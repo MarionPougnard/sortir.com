@@ -26,6 +26,81 @@
     <div class="container mt-4">
         <h3>Filtrer les sorties</h3>
     </div>
+    <div class="container">
+    <div class="row d-flex justify-content-center mt-5">
+        <div style="max-height: 400px; overflow-y: auto;" >
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nom de la sortie</th>
+                        <th>Date de la sortie</th>
+                        <th>Clôture</th>
+                        <th>Inscrits/Places</th>
+                        <th>État</th>
+                        <th>Inscrit</th>
+                        <th>Organisteur</th>
+                        <th class="text-center">Actions</th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for sortie in sorties %}
+                    <tr class="align-middle">
+                        <td>{{ sortie.nom }}</td>
+                        <td>{{ sortie.dateHeureDebut | date("d-m-Y H:i") }}</td>
+                        <td>{{ sortie.dateLimiteInscription | date("d-m-Y") }}</td>
+                        <td>{{ sortie.participants.count }}/{{ sortie.nbInscriptionMax }}</td>
+                        <td>{{ sortie.etat.getLibelle() }}</td>
+                        <td>
+                            {% if utilisateur in sortie.participants and sortie.etat.getLibelle() != "Annulée" %}
+                                ✔️
+                            {% endif %}
+                        </td>
+                        <td>{% if utilisateur is same as sortie.organisateur %}
+                                {{ sortie.organisateur.pseudo }}
+                            {% else %}
+                                <a href="{{ path('utilisateur_profil_id', {'id': sortie.organisateur.id}) }}">{{ sortie.organisateur.pseudo }}</a>
+                            {% endif %}
+                        </td>
+                        <td>
+                           <div class="d-flex justify-content-around">
+                               {# TODO: boton modifier non fonctionnel, s'inscrire non plus #}
+                            {% if utilisateur is same as sortie.organisateur and sortie.etat.getLibelle() == "En création"%}
+                                <a class="btn btn-info" href="{{ path('sorties_modifier', {'id': sortie.id}) }}">Modifier</a>
+                            {% else %}
+                                <a class="btn btn-info" href="{{ path('sorties_detail', {'id': sortie.id}) }}">Afficher</a>
+                            {% endif %}
+                            {% if sortie.etat.getLibelle() == "Ouverte" or sortie.etat.getLibelle() == "Cloturée" %}
+                                {% if utilisateur in sortie.participants %}
+                                    <form method="post" action="{{ path('sorties_desinscrire', {'id': sortie.id}) }}" onsubmit="return confirm('Voulez-vous vraiment vous désinscrire ?');">
+                                        <input type="hidden" name="_token"
+                                               value="{{ csrf_token('desincription' ~ utilisateur.id) }}">
+                                        <button class="btn btn-danger px-4k">Se désister</button>
+                                    </form>
+                                {% else %}
+                                    {% if sortie.etat.getLibelle() != "Cloturée" %}
+                                        <form method="post" action="{{ path('sorties_inscrire', { 'id': sortie.id }) }}"
+                                              onsubmit="return confirm('Souhaitez-vous vous inscrire ?');">
+                                            <input type="hidden" name="_token"
+                                                   value="{{ csrf_token('inscription' ~ utilisateur.id) }}">
+                                            <button class="btn btn-success px-4k">S'inscrire</button>
+                                        </form>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                            </div>
+                        </td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="d-flex mx-4 mb-3 mb-lg-4">
+        <a class="btn btn-info" href="{{ path('sorties_creer') }}">Créer une sortie</a>
+    </div>
 
 
 {% endblock %}
