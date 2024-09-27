@@ -22,7 +22,7 @@ class SortieRepository extends ServiceEntityRepository
 
     public function chercheSortiesNonHistorisees()
     {
-        $etatHistorisee = $this->etatRepository->findByLibelle('Historisée');
+        $etatHistorisee = $this->etatRepository->findOneByLibelle('Historisée');
         $etatId = $etatHistorisee->getId();
         return $this->createQueryBuilder('s')
             ->where('s.etat != :etatExclu')
@@ -31,11 +31,11 @@ class SortieRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function chercheSortieAvecFiltre(RechercheSortie $filtres, EtatRepository $etatRepository, UserInterface $utilisateur)
+    public function chercheSortieAvecFiltre(RechercheSortie $filtres, UserInterface $utilisateur)
     {
         $queryBuilder = $this->createQueryBuilder('s');
 
-        $etatHistorisee = $this->etatRepository->findByLibelle('Historisée');
+        $etatHistorisee = $this->etatRepository->findOneByLibelle('Historisée');
         if ($etatHistorisee) {
             $queryBuilder->andWhere('s.etat != :etatHistorisee')
                 ->setParameter('etatHistorisee', $etatHistorisee->getId());

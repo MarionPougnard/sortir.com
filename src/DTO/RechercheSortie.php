@@ -14,4 +14,15 @@ class RechercheSortie
     public ?bool $estInscrit = true;
     public ?bool $estPasInscrit = true;
     public ?bool $estTerminees = false;
+
+    public function getCampus(): ?Campus
+    {
+        return $this->campus;
+    }
+
+    public function setCampus(?Campus $campus): self
+    {
+        $this->campus = $campus;
+        return $this;
+    }
 }
