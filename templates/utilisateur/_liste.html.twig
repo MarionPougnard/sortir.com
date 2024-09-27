@@ -7,7 +7,7 @@
 
     <div class="container">
         <div class="row d-flex justify-content-center mt-5">
-
+            <div style="max-height: 400px; overflow-y: auto;" >
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -32,13 +32,23 @@
                         <td>{{ utilisateur.telephone }}</td>
                         <td>{{ utilisateur.email }}</td>
                         <td>{{ utilisateur.campus.nom }}</td>
-                        <td><img class="photo_profil" src="{{ utilisateur.photo ? asset('img/profil/' ~ utilisateur.photo) : asset('img/profil/default_profil.png') }}" alt="Photo de {{ utilisateur.pseudo }}"></td>
-                        <td><a href="{{ path('utilisateur_modification', { 'id': utilisateur.id }) }}"
-                               class="btn btn-success px-4k">Modifier</a>
-                            <form method="post" action="{{ path('suppression_profil', { 'id': utilisateur.id }) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');">
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ utilisateur.id) }}">
-                                <button class="btn btn-danger px-4">Supprimer</button>
-                            </form>
+                        <td><img class="photo_profil"
+                                 src="{{ utilisateur.photo ? asset('img/profil/' ~ utilisateur.photo) : asset('img/profil/default_profil.png') }}"
+                                 alt="Photo de {{ utilisateur.pseudo }}"></td>
+
+                        <td>
+                            <div class="d-flex">
+                                <form method="post" action="{{ path('admin_utilisateur_modification', { 'id': utilisateur.id }) }}"
+                                   class="me-3"><button class="btn btn-success px-4k">Modifier</button>
+                                </form>
+
+                                <form method="post" action="{{ path('suppression_profil', { 'id': utilisateur.id }) }}"
+                                      onsubmit="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');">
+                                    <input type="hidden" name="_token"
+                                           value="{{ csrf_token('delete' ~ utilisateur.id) }}">
+                                    <button class="btn btn-danger px-4k">Supprimer</button>
+                                </form>
+                            </div>
                         </td>
 
                     </tr>

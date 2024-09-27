@@ -88,12 +88,50 @@ class UtilisateurController extends AbstractController
         }
     }
 
+    // Pour la modif d'un utilisateur de la part d'un admin
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/{id<\d+>}/admin/modification', name: 'admin_utilisateur_modification', methods: ['GET', 'POST'])]
+    public function adminModificationUtilisateurProfil(Request $request, Utilisateur $utilisateur, EntityManagerInterface $entityManager, UtilisateurRepository $utilisateurRepository): Response
+    {
+            $form = $this->createForm(UtilisateurModificationType::class, $utilisateur);
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+
+                /** @var UploadedFile $file */
+                /*$file = $form->get('photo')->getData();
+                if (!\is_null($file)) {
+                    $fileName = md5(uniqid()) . '.' . $file->guessExtension();
+                    try {
+                        $file->move('../public/img/profil', $fileName);
+                    } catch (FileException $e) {
+
+                    }
+                    $utilisateur->setPicture($fileName);
+                }*/
+
+                $entityManager->persist($utilisateur);
+                $entityManager->flush();
+
+                return $this->render('utilisateur/_liste.html.twig', [
+                    'id' => $utilisateur->getId(),
+                    'utilisateurs' => $utilisateurRepository->findAll()
+                ]);
+            }
+
+            return $this->render('utilisateur/_modification.html.twig', [
+                'utilisateur' => $utilisateur,
+                'modifprofilform' => $form->createView(),
+            ]);
+    }
+
     #[Route('{id<\d+>}/supprimer', name: 'suppression_profil', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function suppression_profil(
         Request $request,
         Utilisateur $utilisateur,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        UtilisateurRepository $utilisateurRepository,
     ): Response {
         if ($this->isCsrfTokenValid('delete'.$utilisateur->getId(), $request->request->get('_token'))) {
             $entityManager->remove($utilisateur);
@@ -101,7 +139,10 @@ class UtilisateurController extends AbstractController
             $this->addFlash('success', "L'étudiant(e) a bien été supprimé(e)");
         }
 
-        return $this->redirectToRoute('app_accueil');
+        return $this->render('utilisateur/_liste.html.twig', [
+            'id' => $utilisateur->getId(),
+            'utilisateurs' => $utilisateurRepository->findAll()
+        ]);
     }
 
 }
