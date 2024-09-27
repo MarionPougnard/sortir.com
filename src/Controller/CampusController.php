@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Campus;
 use App\Entity\Utilisateur;
 use App\Form\CampusModificationType;
+use App\Form\CampusType;
+use App\Form\RegistrationFormType;
 use App\Form\UtilisateurModificationType;
 use App\Repository\CampusRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,6 +29,33 @@ class CampusController extends AbstractController
         return $this->render('campus/index.html.twig', [
             'controller_name' => 'CampusController',
             'allCampus' => $allCampus
+        ]);
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/campus/ajouter', name: 'ajouter_campus', methods: ['GET', 'POST'])]
+    public function ajouter(Request $request, EntityManagerInterface $entityManager, CampusRepository $campusRepository): Response
+    {
+        $campus = new Campus();
+        $form = $this->createForm(CampusType::class, $campus);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $campus = $form->getData();
+
+            $entityManager->persist($campus);
+            $entityManager->flush();
+
+            $allCampus = $campusRepository->findAll();
+
+            return $this->render('campus/index.html.twig', [
+                'controller_name' => 'CampusController',
+                'allCampus' => $allCampus
+            ]);
+        }
+
+        return $this->render('campus/creation.html.twig', [
+            'campusForm' => $form->createView(),
         ]);
     }
 
