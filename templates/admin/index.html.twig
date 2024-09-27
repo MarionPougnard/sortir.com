@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello AdminController!{% endblock %}
+{% block title %}Back office{% endblock %}
 
 {% block body %}
 <div id="title" class="text-center mt-3">
@@ -10,9 +10,9 @@
     <div class="container text-center">
 
         <div class="btn-group mt-4" role="group" aria-label="Basic example">
-            <button type="button" class="btn btn-primary rounded-pill me-3 px-4">Gérer les campus</button>
-            <button type="button" class="btn btn-secondary rounded-pill me-3 px-4">Gérer les villes</button>
-            <button type="button" class="btn btn-success rounded-pill px-4">Gérer les utilisateurs</button>
+            <a type="button" class="btn btn-primary rounded-pill me-3 px-4" href="{{ path('app_campus') }}">Gérer les campus</a>
+            <a type="button" class="btn btn-secondary rounded-pill me-3 px-4">Gérer les villes</a>
+            <a type="button" class="btn btn-success rounded-pill px-4">Gérer les utilisateurs</a>
         </div>
     </div>
 {% endblock %}
