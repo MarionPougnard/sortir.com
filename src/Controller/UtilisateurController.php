@@ -73,7 +73,6 @@ class UtilisateurController extends AbstractController
         } else {
             return $this->redirectToRoute('app_accueil');
         }
-
     }
 
     #[Route('{id<\d+>}/supprimer', name: 'suppression_profil', methods: ['POST'])]

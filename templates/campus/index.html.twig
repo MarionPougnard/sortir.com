@@ -3,31 +3,34 @@
 {% block title %}Les campus :){% endblock %}
 
 {% block body %}
-    <div class="container w-75">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>Campus</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for campus in allCampus %}
-                <tr class="align-middle">
-                    <td>{{ campus.nom }}</td>
-                    <td>
-                        <div class="d-flex">
-                            <form method="POST" action="{{ path('campus_modification', {'id': campus.id }) }}" class="me-5">
-                                <button class="btn btn-success px-4k" type="submit">Modifier</button>
-                            </form>
-                            <form method="POST" action="{{ path('suppression_campus', {'id': campus.id }) }}">
-                                <button class="btn btn-danger px-4k" type="submit">Supprimer</button>
-                            </form>
-                        </div>
-                    </td>
+    <div class="container w-50">
+        <h1 class="m-5 text-center">Gérer les campus</h1>
+        <div style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th class="ps-5">Campus</th>
+                    <th class="text-center">Action</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for campus in allCampus %}
+                    <tr class="align-middle">
+                        <td class="ps-5" style="white-space: nowrap;">{{ campus.nom }}</td>
+                        <td class="w-50">
+                            <div class="d-flex justify-content-end">
+                                <form method="POST" action="{{ path('campus_modification', {'id': campus.id }) }}" class="me-5">
+                                    <button class="btn btn-success px-4k" type="submit">Modifier</button>
+                                </form>
+                                <form method="POST" action="{{ path('suppression_campus', {'id': campus.id }) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce campus?')">
+                                    <button class="btn btn-danger px-4k" type="submit">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endblock %}

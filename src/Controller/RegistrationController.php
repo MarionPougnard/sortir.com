@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Utilisateur;
 use App\Form\RegistrationFormType;
+use App\Repository\UtilisateurRepository;
 use App\Security\AppAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,7 +19,7 @@ class RegistrationController extends AbstractController
 {
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager, UtilisateurRepository $utilisateurRepository): Response
     {
         $user = new Utilisateur();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -39,7 +40,11 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $security->login($user, AppAuthenticator::class, 'main');
+            //return $security->login($user, AppAuthenticator::class, 'main');
+            return $this->render('utilisateur/_liste.html.twig', [
+                'utilisateurs' => $utilisateurRepository->findAll(),
+                'modifprofilform' => $form->createView(),
+            ]);
         }
 
         return $this->render('registration/register.html.twig', [
