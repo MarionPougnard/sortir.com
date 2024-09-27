@@ -18,7 +18,7 @@ class AccueilController extends AbstractController
 {
     #[IsGranted('ROLE_USER')]
     #[Route('/', name: 'app_accueil')]
-    public function montrerSorties(
+    public function index(
         Request $request,
         SortieRepository $sortieRepository,
         EtatRepository $etatRepository,
@@ -45,7 +45,7 @@ class AccueilController extends AbstractController
         return $this->render('accueil/accueil.html.twig', [
             'title' => 'Liste des sorties',
             'sorties' => $sorties,
-
+            'utilisateur' => $user,
         ]);
     }
 }
