@@ -5,6 +5,10 @@
         <h1>Mon profil</h1>
     </div>
 
+    <div class="text-center m-4">
+        <img src="{{ utilisateur.photo ? asset('img/profil/' ~ utilisateur.photo) : asset('img/profil/default_profil.png') }}" alt="Photo de {{ utilisateur.pseudo }}">
+    </div>
+
     <div class="container">
         <div class="row d-flex justify-content-center mt-5">
 

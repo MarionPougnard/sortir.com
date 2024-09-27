@@ -7,56 +7,67 @@
 
     <div class="container">
         <div class="row d-flex justify-content-center mt-5">
+            <div style="max-height: 400px; overflow-y: auto;" >
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Pseudo</th>
+                    <th>Téléphone</th>
+                    <th>Email</th>
+                    <th>Campus</th>
+                    <th>Photo</th>
+                    <th class="text-center">Actions</th>
 
-            <div class="col-md-8">
-                <table class="table table-striped">
+                </tr>
+                </thead>
 
-                    <div class="row g-3 align-items-center">
+                <tbody>
+                {% for utilisateur in utilisateurs %}
+                    <tr class="align-middle">
+                        <td>{{ utilisateur.nom }}</td>
+                        <td>{{ utilisateur.prenom }}</td>
+                        <td>{{ utilisateur.pseudo }}</td>
+                        <td>{{ utilisateur.telephone }}</td>
+                        <td>{{ utilisateur.email }}</td>
+                        <td>{{ utilisateur.campus.nom }}</td>
+                        <td><img class="photo_profil"
+                                 src="{{ utilisateur.photo ? asset('img/profil/' ~ utilisateur.photo) : asset('img/profil/default_profil.png') }}"
+                                 alt="Photo de {{ utilisateur.pseudo }}"></td>
 
-                        <tbody>
-                        <tr>
-                            <th class="text-end">Campus :</th>
-                            <td>{{ utilisateur.campus.nom }}</td>
-                        </tr>
-                        <tr>
-                            <th class="text-end">Pseudo :</th>
-                            <td>{{ utilisateur.pseudo }}</td>
-                        </tr>
-                        <tr>
-                            <th class="text-end">Nom :</th>
-                            <td>{{ utilisateur.nom }}</td>
-                        </tr>
-                        <tr>
-                            <th class="text-end">Prénom :</th>
-                            <td>{{ utilisateur.prenom }}</td>
-                        </tr>
-                        <tr>
-                            <th class="text-end">Téléphone :</th>
-                            <td>{{ utilisateur.telephone }}</td>
-                        </tr>
-                        <tr>
-                            <th class="text-end">Adresse email :</th>
-                            <td>{{ utilisateur.email }}</td>
-                        </tr>
+                        <td>
+                            <div class="d-flex justify-content-around">
+                                <form method="post" action="{{ path('admin_utilisateur_modification', { 'id': utilisateur.id }) }}">
+                                    <button class="btn btn-success px-4k">Modifier</button>
+                                </form>
 
-                        </tbody>
-                    </div>
-                </table>
+                                <form method="post" action="{{ path('suppression_profil', { 'id': utilisateur.id }) }}"
+                                      onsubmit="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');">
+                                    <input type="hidden" name="_token"
+                                           value="{{ csrf_token('delete' ~ utilisateur.id) }}">
+                                    <button class="btn btn-danger px-4k">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
 
-            </div>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td>Aucun utilisateur</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
+    </div>
 
-        <div class="text-center mt-4">
-            {% if utilisateur %}
-                <a href="{{ path('utilisateur_modification', { 'id': utilisateur.id }) }}"
-                   class="btn btn-primary d-inline-block">
-                    Modifier mon profil
-                </a>
-            {% endif %}
-        </div>
+    <div class="text-center mt-4">
+        <a href="{{ path('app_register') }}" class="btn btn-primary d-inline-block">Ajouter un utilisateur</a>
+    </div>
 
+    <div class="d-flex justify-content-end mt-5">
+        <a href="javascript:history.back()" class="btn btn-secondary">Retour</a>
     </div>
 
 {% endblock %}
-
-{% block title %}Profil de {{ utilisateur.pseudo }} {% endblock %}
