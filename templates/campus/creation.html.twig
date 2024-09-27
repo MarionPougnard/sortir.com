@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ajout campus{% endblock %}
+
+{% block body %}
+    <h1 class="text-center mt-5">Ajouter un campus</h1>
+
+    <div class="container w-25 mt-5">
+        {{ form_start(campusForm) }}
+
+        <div class="form-group row mt-5">
+            <label for="nom" class="col-sm-3 col-form-label">
+                {{ form_label(campusForm.nom) }}
+            </label>
+            <div class="col-sm-9">
+                {{ form_widget(campusForm.nom, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+
+        <!-- Bouton "Enregistrer" -->
+        <div class="form-group d-flex justify-content-end mt-5">
+            <a href="javascript:history.back()" class="btn btn-secondary me-3">Retour</a>
+            {{ form_widget(campusForm.save, {'attr': {'class': 'btn btn-success'}}) }}
+        </div>
+
+        {{ form_end(campusForm) }}
+
+    </div>
+
+{% endblock %}
