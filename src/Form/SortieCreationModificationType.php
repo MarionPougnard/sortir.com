@@ -26,7 +26,7 @@ class SortieCreationModificationType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class, [
-                'label'=>'Nom de la sortie :',
+                'label'=>'Nom de la sortie',
             ])
             ->add('dateHeureDebut', DateTimeType::class, [
                 'widget' => 'single_text',
@@ -57,13 +57,13 @@ class SortieCreationModificationType extends AbstractType
                 'placeholder' => '-- Sélectionner une ville --',
                 'choice_label' => 'nom',
                 'mapped' => false,
+                'required' => false,
             ])
             ->add('lieu', EntityType::class, [
                 'label' => 'lieu',
                 'class' => Lieu::class,
                 'placeholder' => '-- Sélectionner un lieu --',
                 'choice_label' => 'nom',
-                'choices' => [],
                 'required' => true,
                 'mapped' => true,
             ])
@@ -90,6 +90,8 @@ class SortieCreationModificationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Sortie::class,
+            'csrf_protection' => true,
+            'csrf_token_id' => 'sortie_creation_modification',
         ]);
     }
 }

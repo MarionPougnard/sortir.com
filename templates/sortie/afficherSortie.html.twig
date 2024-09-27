@@ -70,21 +70,22 @@
                 </div>
             </div>
         </div>
-    </div>
-    <h4>Liste des participants inscrits</h4>
-    <table class="table table-striped">
-        <thead>
+        <h4>Liste des participants inscrits</h4>
+        <table class="table table-striped">
+            <thead>
             <th scope="col">Pseudo</th>
             <th scope="col">Nom</th>
-        </thead>
-        <tbody>
+            </thead>
+            <tbody>
             {% for participant in sortie.participants %}
                 <tr>
                     <td><a href="{{ path('utilisateur_profil_id', {'id': participant.id}) }}"{{ participant.pseudo }}</td>
                     <td>{{ participant.prenom }} {{ participant.nom }}</td>
                 </tr>
             {% endfor %}
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
+
 
 {% endblock %}
