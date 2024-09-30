@@ -1,14 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Les ville :){% endblock %}
+{% block title %}Les villes{% endblock %}
 
 {% block body %}
     <div class="container w-50">
         <h1 class="m-5 text-center">Gérer les villes</h1>
         <div style="max-height: 400px; overflow-y: auto;">
             <table class="table table-striped">
-                <thead style="position: sticky; top: 0; background-color: white; z-index: 1
- ">
+                <thead style="position: sticky; top: 0; background-color: white; z-index: 1">
                 <tr>
                     <th class="ps-5">Ville</th>
                     <th class="ps-5">Code Postal</th>
@@ -38,7 +37,7 @@
         </div>
 
         <div class="d-flex justify-content-end mt-5">
-            <a href="javascript:history.back()" class="btn btn-secondary me-3">Retour</a>
+            <a href="{{ path('app_admin') }}" class="btn btn-secondary me-3">Retour</a>
             <form method="POST" action="{{ path('ajouter_ville') }}">
                 <button class="btn btn-success px-4k" type="submit">Ajouter</button>
             </form>
