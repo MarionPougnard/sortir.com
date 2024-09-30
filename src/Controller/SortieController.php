@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Etat;
 use App\Entity\Sortie;
+use App\Entity\Utilisateur;
 use App\Enum\EtatEnum;
 use App\Form\AnnulationSortieFormType;
 use App\Form\SortieCreationModificationType;
@@ -36,6 +37,7 @@ class SortieController extends AbstractController
         return $this->render('sortie/afficherSortie.html.twig', [
             'title' => 'Afficher une sortie',
             'sortie' => $sortie,
+            'utilisateur' => $user,
         ]);
 
     }
@@ -58,7 +60,7 @@ class SortieController extends AbstractController
                 $this->addFlash('error', 'Vous ne pouvez pas modifier cette sortie car vous n\'en êtes pas l\'organisateur.');
                 return $this->redirectToRoute('app_accueil');
             }
-            if ($sortie->getEtat()->getLibelle() !== EtatEnum::EN_CREATION) {
+            if ($sortie->getEtat()->getLibelle() !== EtatEnum::EN_CREATION->value) {
                 $this->addFlash('error', 'Vous ne pouvez pas modifier cette sortie car elle n\'est plus en création.');
                 return $this->redirectToRoute('app_accueil');
             }
@@ -105,7 +107,20 @@ class SortieController extends AbstractController
         ]);
     }
 
+    #[Route('/{id<\d+>}/publier', name: 'publier', methods: ['GET','POST'])]
+    public function publier(
+        Sortie $sortie,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $etatRepo = $entityManager->getRepository(Etat::class);
+        $etat = $etatRepo->findOneBy(['libelle' => EtatEnum::OUVERTE]);
+        $sortie->setEtat($etat);
+        $entityManager->persist($sortie);
+        $entityManager->flush();
+        $this->addFlash('success', 'La sortie a bien été publiée');
 
+        return $this->redirectToRoute('app_accueil');
+    }
     #[Route('/{id<\d+>}/supprimer', name: 'supprimer', methods: ['GET','POST'])]
     public function suppression(
         Sortie $sortie,
@@ -159,10 +174,14 @@ class SortieController extends AbstractController
         Sortie $sortie,
         EntityManagerInterface $entityManager
     ): Response {
+        /** @var Utilisateur|null $utilisateur */
         $utilisateur = $this->getUser();
+        if (!$utilisateur) {
+            return $this->redirectToRoute('app_login');
+        }
 
         if ($sortie
-            && $sortie->getEtat()->getLibelle() == EtatEnum::OUVERTE
+            && $sortie->getEtat()->getLibelle() === EtatEnum::OUVERTE->value
             && !$sortie->getParticipants()->contains($utilisateur)) {
             $sortie->addParticipant($utilisateur);
             $entityManager->flush();
@@ -170,25 +189,27 @@ class SortieController extends AbstractController
         }
 
         if (count($sortie->getParticipants()) >= $sortie->getNbInscriptionMax()) {
-            $sortie->setEtat(EtatEnum::CLOTUREE);
+            $etatCloturee = $entityManager->getRepository(Etat::class)->findOneBy(['libelle' => EtatEnum::CLOTUREE->value]);
+            $sortie->setEtat($etatCloturee);
             $entityManager->flush();
         }
 
         return $this->redirectToRoute('app_accueil');
     }
 
-    #[Route('/{id<\d+>}/desinscrire', name: 'desinscrire', methods: ['POST'])]
+    #[Route('/{id<\d+>}/desinscrire', name: 'desinscrire', methods: ['GET','POST'])]
     public function desinscrire(
         Sortie $sortie,
         EntityManagerInterface $entityManager
     ): Response
     {
+        /** @var Utilisateur|null $utilisateur */
         $utilisateur = $this->getUser();
 
         if ($sortie
             && $sortie->getParticipants()->contains($utilisateur)
-            && ($sortie->getEtat()->getLibelle() == EtatEnum::OUVERTE
-            || $sortie->getEtat()->getLibelle() == EtatEnum::CLOTUREE)) {
+            && ($sortie->getEtat()->getLibelle() === EtatEnum::OUVERTE->value
+            || $sortie->getEtat()->getLibelle() === EtatEnum::CLOTUREE->value)) {
 
             $sortie->removeParticipant($utilisateur);
             $entityManager->flush();
