@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Campus;
 use App\Entity\Etat;
 use App\Entity\Sortie;
 use App\Entity\Utilisateur;
@@ -31,7 +32,7 @@ class SortieController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $sortie = $sortieRepository->find($id);
+        $sortie = $sortieRepository->findOptimise($id);
 
 
         return $this->render('sortie/afficherSortie.html.twig', [
@@ -50,6 +51,7 @@ class SortieController extends AbstractController
         ?Sortie $sortie = null,
     ): Response
     {
+
         if ($sortie === null) {
             $sortie = new Sortie();
             $organisateur = $this->getUser();
@@ -103,7 +105,7 @@ class SortieController extends AbstractController
         return $this->render('sortie/creerSortie.html.twig', [
             'sortieform' => $form->createView(),
             'title' => $sortie->getId() ? 'Modifier une sortie' : 'Créer une sortie',
-            'sortie' => $sortie
+            'sortie' => $sortie,
         ]);
     }
 

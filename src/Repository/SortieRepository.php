@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\DTO\RechercheSortie;
 use App\Entity\Sortie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -20,13 +21,26 @@ class SortieRepository extends ServiceEntityRepository
         $this->etatRepository = $etatRepository;
     }
 
+    public function findOptimise(int $id) {
+        return $this->createQueryBuilder('s')
+            ->innerJoin('s.lieu', 'lieu')->addSelect('lieu')
+            ->innerJoin('lieu.ville', 'ville')->addSelect('ville')
+            ->innerJoin('s.campus', 'campus')->addSelect('campus')
+            ->innerJoin('s.etat', 'etat')->addSelect('etat')
+            ->leftJoin('s.participants', 'participants')->addSelect('participants')
+            ->where('s.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function chercheSortiesNonHistorisees()
     {
-        $etatHistorisee = $this->etatRepository->findOneByLibelle('Historisée');
-        $etatId = $etatHistorisee->getId();
         return $this->createQueryBuilder('s')
-            ->where('s.etat != :etatExclu')
-            ->setParameter('etatExclu', $etatId)
+            ->innerJoin('s.etat', 'etat', Join::WITH, 'etat.libelle != :etat')->addSelect('etat')
+            ->innerJoin('s.organisateur', 'organisateur')->addSelect('organisateur')
+            ->leftJoin('s.participants', 'participants')->addSelect('participants')
+            ->setParameter('etat', 'Historisée')
             ->getQuery()
             ->getResult();
     }

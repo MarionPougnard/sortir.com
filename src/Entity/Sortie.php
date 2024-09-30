@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\EtatEnum;
 use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -251,7 +252,7 @@ class Sortie
         $dateFin = (clone $this->dateHeureDebut)->modify("+{$this->duree} minutes");
         $dateHistorisation = (clone $dateFin)->modify('+1 month');
 
-        if ($this->etat && $this->etat->getLibelle() == 'Ouverte') {
+        if ($this->etat && $this->etat->getLibelle() === EtatEnum::OUVERTE->value) {
             $nbParticipants = count($this->participants);
 
             $isMaxParticipantsAtteint = $nbParticipants >= $this->nbInscriptionMax;
@@ -266,17 +267,19 @@ class Sortie
             }
         }
 
-        if ($this->etat && $this->etat->getLibelle() == 'Clôturée' && $now >= $this->dateHeureDebut) {
+        if ($this->etat && $this->etat->getLibelle() === EtatEnum::CLOTUREE->value && $now >= $this->dateHeureDebut) {
             $etatEnCours = $etatRepository->findOneBy(['libelle' => 'En cours']);
             $this->setEtat($etatEnCours);
         }
 
-        if ($this->etat && $this->etat->getLibelle() == 'En cours' && $now >= $dateFin) {
+        if ($this->etat && $this->etat->getLibelle() === EtatEnum::EN_COURS->value  && $now >= $dateFin) {
             $etatTerminee = $etatRepository->findOneBy(['libelle' => 'Terminée']);
             $this->setEtat($etatTerminee);
         }
 
-        if ($this->etat && $this->etat->getLibelle() == 'Terminée' && $now > $dateHistorisation) {
+        if ($this->etat
+            && ($this->etat->getLibelle() === EtatEnum::TERMINEE->value || $this->etat->getLibelle() === EtatEnum::ANNULEE->value )
+            && $now > $dateHistorisation) {
             $etatHistorisee = $etatRepository->findOneBy(['libelle' => 'Historisée']);
             $this->setEtat($etatHistorisee);
         }
