@@ -6,6 +6,7 @@ use App\Entity\Campus;
 use App\Entity\Utilisateur;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -25,17 +26,17 @@ class UtilisateurModificationType extends AbstractType
                 'label' => 'Campus',
                 'placeholder' => 'Choisissez un campus',
             ])
-        ->add('pseudo', TextType::class, ['label'=>'Pseudo'])
-        ->add('nom', TextType::class, ['label'=>'Nom'])
-        ->add('prenom', TextType::class, ['label'=>'Prénom'])
-        ->add('telephone', TextType::class, ['label'=>'Téléphone', 'attr' =>['placeholder' => '+33_  _ _  _ _  _ _  _ _']])
-        ->add('email', EmailType::class, ['label'=>'Email'])
-        ->add('photo', FileType::class, [
-            'mapped' => false,
-            'data_class' => null,
-            'label' => 'Ma photo',
-            'attr' => ['accept' => 'images/*'],
-            'required' => false])
+            ->add('pseudo', TextType::class, ['label' => 'Pseudo'])
+            ->add('nom', TextType::class, ['label' => 'Nom'])
+            ->add('prenom', TextType::class, ['label' => 'Prénom'])
+            ->add('telephone', TextType::class, ['label' => 'Téléphone', 'attr' => ['placeholder' => '+33_  _ _  _ _  _ _  _ _']])
+            ->add('email', EmailType::class, ['label' => 'Email'])
+            ->add('photo', FileType::class, [
+                'mapped' => false,
+                'data_class' => null,
+                'label' => 'Photo',
+                'attr' => ['accept' => 'images/*'],
+                'required' => false])
             ->add('motDePasse', PasswordType::class, [
                 'mapped' => false,  // Si vous ne souhaitez pas mapper ce champ à l'entité Utilisateur
                 'required' => false, // Peut être facultatif selon votre logique
@@ -46,10 +47,14 @@ class UtilisateurModificationType extends AbstractType
                 'required' => false,
                 'label' => 'Confirmation'
             ])
-        ->add('save', SubmitType::class, [
-        'label' => 'Enregistrer',
-        'attr' => ['class' => 'btn btn-success']
-    ]);
+            ->add('estActif', CheckboxType::class, [
+                'label' => 'Compte actif',
+                'required' => false
+            ])
+            ->add('save', SubmitType::class, [
+                'label' => 'Enregistrer',
+                'attr' => ['class' => 'btn btn-success']
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

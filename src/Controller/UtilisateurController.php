@@ -59,18 +59,6 @@ class UtilisateurController extends AbstractController
 
             if ($form->isSubmitted() && $form->isValid()) {
 
-                /** @var UploadedFile $file */
-                /*$file = $form->get('photo')->getData();
-                if (!\is_null($file)) {
-                    $fileName = md5(uniqid()) . '.' . $file->guessExtension();
-                    try {
-                        $file->move('../public/img/profil', $fileName);
-                    } catch (FileException $e) {
-
-                    }
-                    $utilisateur->setPicture($fileName);
-                }*/
-
                 $entityManager->persist($utilisateur);
                 $entityManager->flush();
 
@@ -98,25 +86,9 @@ class UtilisateurController extends AbstractController
 
             if ($form->isSubmitted() && $form->isValid()) {
 
-                /** @var UploadedFile $file */
-                /*$file = $form->get('photo')->getData();
-                if (!\is_null($file)) {
-                    $fileName = md5(uniqid()) . '.' . $file->guessExtension();
-                    try {
-                        $file->move('../public/img/profil', $fileName);
-                    } catch (FileException $e) {
-
-                    }
-                    $utilisateur->setPicture($fileName);
-                }*/
-
-                $entityManager->persist($utilisateur);
                 $entityManager->flush();
 
-                return $this->render('utilisateur/_liste.html.twig', [
-                    'id' => $utilisateur->getId(),
-                    'utilisateurs' => $utilisateurRepository->findAll()
-                ]);
+                return $this->redirectToRoute('utilisateur_liste');
             }
 
             return $this->render('utilisateur/_modification.html.twig', [
