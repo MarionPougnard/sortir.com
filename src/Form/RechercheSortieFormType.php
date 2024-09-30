@@ -17,7 +17,7 @@ class RechercheSortieFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('Campus', EntityType::class, [
+            ->add('campus', EntityType::class, [
                 'label' => 'Campus',
                 'class' => Campus::class,
                 'choice_label' => 'nom',
@@ -40,15 +40,15 @@ class RechercheSortieFormType extends AbstractType
                 ])
             ->add('estOrganisateur', CheckboxType::class, [
                 'required' => false,
-                'label' => "Sorties dont je suis l'organisateur/trice",
+                'label' => "Sorties dont je suis l'organisateur.trice",
             ])
             ->add('estInscrit', CheckboxType::class, [
                 'required' => false,
-                'label' => "Sorties auxquelles je suis inscrit/e",
+                'label' => "Sorties auxquelles je suis inscrit.e",
             ])
             ->add('estPasInscrit', CheckboxType::class, [
                 'required' => false,
-                'label' => "Sorties auxquelles je ne suis pas inscrit/e",
+                'label' => "Sorties auxquelles je ne suis pas inscrit.e",
             ])
             ->add('estTerminees', CheckboxType::class, [
                 'required' => false,

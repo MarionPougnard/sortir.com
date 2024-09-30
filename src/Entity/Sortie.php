@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\DocBlock\Tags\Property;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
@@ -25,6 +26,7 @@ class Sortie
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Assert\NotBlank(message: "La date et l'heure sont requises")]
+    #[Assert\GreaterThan("today", message: "La sortie est un évènement à venir")]
     private ?\DateTimeInterface $dateHeureDebut = null;
 
     #[ORM\Column(length: 7)]
@@ -34,6 +36,8 @@ class Sortie
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Assert\NotBlank(message: "La date limite d'inscription est requise")]
+    #[Assert\GreaterThan("today", message: "La sortie est un évènement à venir")]
+    #[Assert\LessThan(propertyPath: 'dateHeureDebut', message: "La date limite d'inscription doit être antérieure à la date de la sortie")]
     private ?\DateTimeInterface $dateLimiteInscription = null;
 
     #[ORM\Column]

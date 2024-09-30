@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Etat;
 use App\Entity\Sortie;
+use App\Entity\Utilisateur;
 use App\Enum\EtatEnum;
 use App\Form\AnnulationSortieFormType;
 use App\Form\SortieCreationModificationType;
@@ -36,6 +37,7 @@ class SortieController extends AbstractController
         return $this->render('sortie/afficherSortie.html.twig', [
             'title' => 'Afficher une sortie',
             'sortie' => $sortie,
+            'utilisateur' => $user,
         ]);
 
     }
@@ -58,7 +60,7 @@ class SortieController extends AbstractController
                 $this->addFlash('error', 'Vous ne pouvez pas modifier cette sortie car vous n\'en êtes pas l\'organisateur.');
                 return $this->redirectToRoute('app_accueil');
             }
-            if ($sortie->getEtat()->getLibelle() !== EtatEnum::EN_CREATION) {
+            if ($sortie->getEtat()->getLibelle() !== EtatEnum::EN_CREATION->value) {
                 $this->addFlash('error', 'Vous ne pouvez pas modifier cette sortie car elle n\'est plus en création.');
                 return $this->redirectToRoute('app_accueil');
             }
@@ -105,42 +107,20 @@ class SortieController extends AbstractController
         ]);
     }
 
-    /*#[Route('/{id<\d+>}/modifier', name: 'modification', methods: ['GET', 'POST'])]
-    public function modification(
-        Request $request,
+    #[Route('/{id<\d+>}/publier', name: 'publier', methods: ['GET','POST'])]
+    public function publier(
         Sortie $sortie,
-        EntityManagerInterface $entityManager)
-    {
-        $form = $this->createForm(SortieCreationModificationType::class, $sortie);
-        $form->handleRequest($request);
+        EntityManagerInterface $entityManager
+    ): Response {
+        $etatRepo = $entityManager->getRepository(Etat::class);
+        $etat = $etatRepo->findOneBy(['libelle' => EtatEnum::OUVERTE]);
+        $sortie->setEtat($etat);
+        $entityManager->persist($sortie);
+        $entityManager->flush();
+        $this->addFlash('success', 'La sortie a bien été publiée');
 
-        $action = $request->get('action');
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($action === 'enregistrer') {
-                $etat = $entityManager->getRepository(Etat::class)->findOneBy(['libelle' => EtatEnum::EN_CREATION]);
-                $sortie->setEtat($etat);
-            }
-            if ($action === 'publier') {
-                $etat = $entityManager->getRepository(Etat::class)->findOneBy(['libelle' => EtatEnum::OUVERTE]);
-                $sortie->setEtat($etat);
-            }
-            try {
-                $entityManager->persist($sortie);
-                $entityManager->flush();
-                $this->addFlash('success', 'La sortie a bien été créée');
-            } catch (\Exception $exception) {
-                $this->addFlash('error', 'Une erreur est survenue lors de l\'enregistrement de la sortie : ' . $exception->getMessage());
-            }
-            return $this->redirectToRoute('app_accueil');
-        }
-
-        return $this->render('sortie/creerSortie.html.twig', [
-            'sortieform' => $form->createView(),
-            'sortie' => $sortie,
-            'title' => 'Modifier une sortie',
-        ]);
-    }*/
-
+        return $this->redirectToRoute('app_accueil');
+    }
     #[Route('/{id<\d+>}/supprimer', name: 'supprimer', methods: ['GET','POST'])]
     public function suppression(
         Sortie $sortie,
@@ -187,6 +167,56 @@ class SortieController extends AbstractController
             "sortie"=>$sortie,
             'annulationSortieForm'=>$annulationSortieForm->createView(),
         ]);
+    }
+
+    #[Route('/{id<\d+>}/inscrire', name: 'inscrire', methods: ['GET','POST'])]
+    public function inscrire(
+        Sortie $sortie,
+        EntityManagerInterface $entityManager
+    ): Response {
+        /** @var Utilisateur|null $utilisateur */
+        $utilisateur = $this->getUser();
+        if (!$utilisateur) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        if ($sortie
+            && $sortie->getEtat()->getLibelle() === EtatEnum::OUVERTE->value
+            && !$sortie->getParticipants()->contains($utilisateur)) {
+            $sortie->addParticipant($utilisateur);
+            $entityManager->flush();
+            $this->addFlash('success', 'Vous êtes inscrit à la sortie');
+        }
+
+        if (count($sortie->getParticipants()) >= $sortie->getNbInscriptionMax()) {
+            $etatCloturee = $entityManager->getRepository(Etat::class)->findOneBy(['libelle' => EtatEnum::CLOTUREE->value]);
+            $sortie->setEtat($etatCloturee);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_accueil');
+    }
+
+    #[Route('/{id<\d+>}/desinscrire', name: 'desinscrire', methods: ['GET','POST'])]
+    public function desinscrire(
+        Sortie $sortie,
+        EntityManagerInterface $entityManager
+    ): Response
+    {
+        /** @var Utilisateur|null $utilisateur */
+        $utilisateur = $this->getUser();
+
+        if ($sortie
+            && $sortie->getParticipants()->contains($utilisateur)
+            && ($sortie->getEtat()->getLibelle() === EtatEnum::OUVERTE->value
+            || $sortie->getEtat()->getLibelle() === EtatEnum::CLOTUREE->value)) {
+
+            $sortie->removeParticipant($utilisateur);
+            $entityManager->flush();
+            $this->addFlash('success', 'Vous êtes désinscrit ');
+        }
+
+        return $this->redirectToRoute('app_accueil');
     }
 
 }

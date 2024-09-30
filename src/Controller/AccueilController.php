@@ -44,6 +44,7 @@ class AccueilController extends AbstractController
 
         return $this->render('accueil/accueil.html.twig', [
             'title' => 'Liste des sorties',
+            'form' => $formRecherche->createView(),
             'sorties' => $sorties,
             'utilisateur' => $user,
         ]);

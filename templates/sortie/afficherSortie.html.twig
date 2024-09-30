@@ -79,12 +79,23 @@
             <tbody>
             {% for participant in sortie.participants %}
                 <tr>
-                    <td><a href="{{ path('utilisateur_profil_id', {'id': participant.id}) }}"{{ participant.pseudo }}</td>
+                    <td><a href="{{ path('utilisateur_profil_id', {'id': participant.id}) }}">{{ participant.pseudo }}</a></td>
                     <td>{{ participant.prenom }} {{ participant.nom }}</td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
+        {% if sortie.etat.getLibelle() == "Ouverte" or sortie.etat.getLibelle() == "Cloturée" %}
+            {% if utilisateur in sortie.participants %}
+                <a class="btn btn-danger fas fa-user-times" title="Se désinscrire" href="{{ path('sorties_desinscrire', {'id': sortie.id}) }}"
+                   onclick="return confirm('Voulez-vous vraiment vous désinscrire ?');"></a>
+            {% else %}
+                {% if sortie.etat.getLibelle() != "Cloturée" %}
+                    <a class="btn btn-success fas fa-user-plus" title="S'incrire" href="{{ path('sorties_inscrire', {'id': sortie.id}) }}"
+                       onclick="return confirm('Souhaitez-vous vous inscrire ?');"></a>
+                {% endif %}
+            {% endif %}
+        {% endif %}
     </div>
 
 

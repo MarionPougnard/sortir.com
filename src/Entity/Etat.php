@@ -38,9 +38,9 @@ class Etat
         return $this->id;
     }
 
-    public function getLibelle(): EtatEnum
+    public function getLibelle(): string
     {
-        return EtatEnum::from($this->libelle);
+        return EtatEnum::from($this->libelle)->value;
     }
 
     public function setLibelle(EtatEnum $libelle): void
