@@ -61,7 +61,7 @@ class UtilisateurController extends AbstractController
             if ($form->isSubmitted() && $form->isValid()) {
 
                 /** @var UploadedFile $file */
-                /*$file = $form->get('photo')->getData();
+                $file = $form->get('photo')->getData();
                 if (!\is_null($file)) {
                     $fileName = md5(uniqid()) . '.' . $file->guessExtension();
                     try {
@@ -69,9 +69,8 @@ class UtilisateurController extends AbstractController
                     } catch (FileException $e) {
 
                     }
-                    $utilisateur->setPicture($fileName);
-                }*/
-
+                    $utilisateur->setPhoto($fileName);
+                }
 
                 $entityManager->flush();
 
@@ -100,7 +99,7 @@ class UtilisateurController extends AbstractController
             if ($form->isSubmitted() && $form->isValid()) {
 
                 /** @var UploadedFile $file */
-                /*$file = $form->get('photo')->getData();
+                $file = $form->get('photo')->getData();
                 if (!\is_null($file)) {
                     $fileName = md5(uniqid()) . '.' . $file->guessExtension();
                     try {
@@ -108,8 +107,8 @@ class UtilisateurController extends AbstractController
                     } catch (FileException $e) {
 
                     }
-                    $utilisateur->setPicture($fileName);
-                }*/
+                    $utilisateur->setPhoto($fileName);
+                }
 
                 $entityManager->flush();
 
