@@ -16,6 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class RegistrationFormType extends AbstractType
 {
@@ -26,7 +27,7 @@ class RegistrationFormType extends AbstractType
             ->add('prenom', TextType::class, ['label' => 'Prénom'])
             ->add('pseudo', TextType::class, ['label' => 'Pseudo'])
             ->add('email', EmailType::class, ['label' => 'Email'])
-            ->add('telephone', TextType::class, ['label' => 'Téléphone', 'attr' => ['placeholder' => '+33_  _ _  _ _  _ _  _ _']])
+            ->add('telephone', TextType::class, ['label' => 'Téléphone', 'attr' => ['placeholder' => '+33_  _ _  _ _  _ _  _ _'], 'required' => false])
             ->add('agreeTerms', CheckboxType::class, [
                 'label' => 'Valider les conditions',
                 'mapped' => false,
@@ -51,6 +52,7 @@ class RegistrationFormType extends AbstractType
                         // max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ]),
+                    new Regex('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'),
                 ],
             ])
             ->add('campus', EntityType::class, [
