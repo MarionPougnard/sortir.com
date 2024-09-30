@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modification ville{% endblock %}
+
+{% block body %}
+    <div id="title" class="text-center mt-3">
+        <h1>Modifier la ville de {{ ville.nom }}</h1>
+    </div>
+
+    <div class="container">
+        <div class="row d-flex justify-content-center">
+
+            <div class="col-md-8">
+                {{ form_start(villeModification) }}
+
+                <!-- Nom -->
+                <div class="form-group row mt-5">
+                    <label for="nom" class="col-sm-3 col-form-label">
+                        {{ form_label(villeModification.nom) }}
+                    </label>
+                    <div class="col-sm-9">
+                        {{ form_widget(villeModification.nom, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(villeModification.nom) }}
+                    </div>
+                </div>
+
+                <!-- Code postal -->
+                <div class="form-group row mt-3">
+                    <label for="nom" class="col-sm-3 col-form-label">
+                        {{ form_label(villeModification.codePostal) }}
+                    </label>
+                    <div class="col-sm-9">
+                        {{ form_widget(villeModification.codePostal, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(villeModification.codePostal) }}
+                    </div>
+                </div>
+
+                <!-- Bouton "Enregistrer" -->
+                <div class="form-group d-flex justify-content-end mt-5">
+                    <a href="javascript:history.back('app_ville')" class="btn btn-secondary me-3">Retour</a>
+                    {{ form_widget(villeModification.save, {'attr': {'class': 'btn btn-success'}}) }}
+                </div>
+
+                {{ form_end(villeModification) }}
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
