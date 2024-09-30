@@ -118,7 +118,6 @@
                         </td>
                         <td>
                            <div class="d-flex justify-content-around">
-                               {# TODO: bouton modifier non fonctionnel, s'inscrire non plus #}
                             {% if utilisateur is same as sortie.organisateur and sortie.etat.getLibelle() == "En création" %}
                                 <a class="btn btn-info fas fa-edit" title="Modifier" href="{{ path('sorties_modifier', {'id': sortie.id}) }}"></a>
                                 <a class="btn btn-warning fas fa-upload" title="Publier" href="{{ path('sorties_publier', {'id': sortie.id}) }}"></a>
