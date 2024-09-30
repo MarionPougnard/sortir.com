@@ -53,13 +53,26 @@ class UtilisateurController extends AbstractController
     #[Route('/{id<\d+>}/modification', name: 'utilisateur_modification', methods: ['GET', 'POST'])]
     public function modificationProfil(Request $request, Utilisateur $utilisateur, EntityManagerInterface $entityManager): Response
     {
-          if ($this->getUser() == $utilisateur) {
+          if ($this->getUser() === $utilisateur) {
+
             $form = $this->createForm(UtilisateurModificationType::class, $utilisateur);
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
 
-                $entityManager->persist($utilisateur);
+                /** @var UploadedFile $file */
+                /*$file = $form->get('photo')->getData();
+                if (!\is_null($file)) {
+                    $fileName = md5(uniqid()) . '.' . $file->guessExtension();
+                    try {
+                        $file->move('../public/img/profil', $fileName);
+                    } catch (FileException $e) {
+
+                    }
+                    $utilisateur->setPicture($fileName);
+                }*/
+
+
                 $entityManager->flush();
 
                 return $this->redirectToRoute('utilisateur_profil', [
@@ -85,6 +98,18 @@ class UtilisateurController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
+
+                /** @var UploadedFile $file */
+                /*$file = $form->get('photo')->getData();
+                if (!\is_null($file)) {
+                    $fileName = md5(uniqid()) . '.' . $file->guessExtension();
+                    try {
+                        $file->move('../public/img/profil', $fileName);
+                    } catch (FileException $e) {
+
+                    }
+                    $utilisateur->setPicture($fileName);
+                }*/
 
                 $entityManager->flush();
 

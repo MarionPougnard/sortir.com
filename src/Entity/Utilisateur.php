@@ -64,7 +64,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $estActif = null;
 
-    #[ORM\Column(length: 150, nullable: true)]
+    #[ORM\Column(type: 'string', length: 150, nullable: true)]
     private ?string $photo = null;
 
     #[Assert\NotBlank]
@@ -165,7 +165,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->photo;
     }
 
-    public function setPhoto(?string $photo): static
+    public function setPhoto(?string $photo): self
     {
         $this->photo = $photo;
 
