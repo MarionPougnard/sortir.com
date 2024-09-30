@@ -19,6 +19,7 @@
                     <th>Campus</th>
                     <th>Photo</th>
                     <th class="text-center">Actions</th>
+                    <th class="text-center">Compte actif</th>
 
                 </tr>
                 </thead>
@@ -51,7 +52,7 @@
                                 </form>
                             </div>
                         </td>
-
+                        <td class="text-center">{{ utilisateur.estActif ? 'Oui' : 'Non' }}</td>
                     </tr>
                 {% else %}
                     <tr>
