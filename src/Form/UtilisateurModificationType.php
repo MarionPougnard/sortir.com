@@ -50,11 +50,11 @@ class UtilisateurModificationType extends AbstractType
             ->add('estActif', CheckboxType::class, [
                 'label' => 'Compte actif',
                 'required' => false
-            ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Enregistrer',
-                'attr' => ['class' => 'btn btn-success']
             ]);
+//            ->add('save', SubmitType::class, [
+//                'label' => 'Enregistrer',
+//                'attr' => ['class' => 'btn btn-success']
+//            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

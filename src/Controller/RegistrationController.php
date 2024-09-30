@@ -9,17 +9,25 @@ use App\Security\AppAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class RegistrationController extends AbstractController
 {
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager, UtilisateurRepository $utilisateurRepository): Response
+    public function register(Request $request,
+                             UserPasswordHasherInterface $userPasswordHasher,
+                             EntityManagerInterface $entityManager,
+                             SluggerInterface $slugger,
+                             #[Autowire('%kernel.project_dir%/public/img/profil')] string $uploadImageDir,
+                             UtilisateurRepository $utilisateurRepository): Response
     {
         $user = new Utilisateur();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -36,6 +44,21 @@ class RegistrationController extends AbstractController
 
             // encode the plain password
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+
+            // Upload image
+            $uploadImageFile = $form->get('photo')->getData();
+            if ($uploadImageFile) {
+                $originalFilename = pathinfo($uploadImageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $uploadImageFile->guessExtension();
+
+                try {
+                    $uploadImageFile->move($uploadImageDir, $newFilename);
+                } catch (FileException $e) {
+                    throw $this->createNotFoundException($e->getMessage());
+                }
+                $user->setPhoto($newFilename);
+            }
 
             $entityManager->persist($user);
             $entityManager->flush();
