@@ -2,13 +2,14 @@
 
 namespace App\Controller;
 
-use App\Entity\Sortie;
+use App\DTO\RechercheUtilisateur;
 use App\Entity\Utilisateur;
+use App\Form\RechercheSortieFormType;
 use App\Form\UtilisateurModificationType;
+use App\Form\UtilisateurSearchType;
 use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,12 +41,30 @@ class UtilisateurController extends AbstractController
     // Route page liste utilisateurs
     #[Route('/liste_utilisateurs', name: 'utilisateur_liste')]
     #[IsGranted('ROLE_ADMIN')]
-    public function listeUtilisateurs(UtilisateurRepository $utilisateurRepository): Response
+    public function listeUtilisateurs(
+        Request $request,
+        UtilisateurRepository $utilisateurRepository
+    ): Response
     {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $filtreRecherche = new RechercheUtilisateur();
+        $formRecherche = $this->createForm(UtilisateurSearchType::class, $filtreRecherche);
+        $formRecherche->handleRequest($request);
         $utilisateurs = $utilisateurRepository->findAll();
 
+        if ($formRecherche->isSubmitted() && $formRecherche->isValid()) {
+            $filtreRecherche = $formRecherche->getData();
+            $utilisateurs = $utilisateurRepository->chercheUtilisateurAvecFiltre($filtreRecherche);
+        }
+
         return $this->render('utilisateur/_liste.html.twig', [
-            'utilisateurs' => $utilisateurs
+            'title' => 'liste des utilisateurs',
+            'utilisateurs' => $utilisateurs,
+            'formRecherche' => $formRecherche->createView(),
         ]);
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\DTO\RechercheUtilisateur;
 use App\Entity\Utilisateur;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,6 +17,29 @@ class UtilisateurRepository extends ServiceEntityRepository
         parent::__construct($registry, Utilisateur::class);
     }
 
+    public function chercheUtilisateurAvecFiltre(RechercheUtilisateur $filtres) {
+        $queryBuilder = $this->createQueryBuilder('utilisateur')
+            ->innerJoin('utilisateur.campus', 'campus')->addSelect('campus');
+
+        if (isset($filtres->search) && $filtres->search) {
+            $queryBuilder->andWhere( $queryBuilder->expr()->orX(
+                $queryBuilder->expr()->like('utilisateur.nom', ':search'),
+                $queryBuilder->expr()->like('utilisateur.prenom', ':search'),
+                $queryBuilder->expr()->like('utilisateur.pseudo', ':search')
+            ))
+                ->setParameter('search', '%'.$filtres->search.'%');
+        }
+        if (isset($filtres->campus) && $filtres->campus->getId()) {
+            $queryBuilder->andWhere('utilisateur.campus = :campus')
+                ->setParameter('campus', $filtres->campus->getId());
+        }
+        if ($filtres->estActif) {
+            $queryBuilder->andWhere('utilisateur.estActif = :actif')
+                ->setParameter('actif', true);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
     //    /**
     //     * @return Utilisateur[] Returns an array of Utilisateur objects
     //     */

@@ -2,8 +2,9 @@
 
 namespace App\Controller;
 
+use App\DTO\RechercheVille;
 use App\Entity\Ville;
-use App\Form\VilleModificationType;
+use App\Form\VilleSearchType;
 use App\Form\VilleType;
 use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,11 +18,26 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class VilleController extends AbstractController
 {
     #[Route('/ville', name: 'app_ville')]
-    public function index(VilleRepository $villeRepository): Response
+    public function index(
+        VilleRepository $villeRepository,
+        Request $request,
+    ): Response
     {
+        $filtreRecherche = new RechercheVille();
+        $formRecherche = $this->createForm(VilleSearchType::class, $filtreRecherche);
+        $formRecherche->handleRequest($request);
+        $villes = $villeRepository->findAll();
+
+        if ($formRecherche->isSubmitted() && $formRecherche->isValid()) {
+            $filtreRecherche = $formRecherche->getData();
+            $villes = $villeRepository->rechercheVilleAvecFiltre($filtreRecherche);
+        }
+
         return $this->render('ville/index.html.twig', [
-            'controller_name' => 'VilleController',
-            'allVilles' => $villeRepository->findAll()
+            'title' => 'Les villes',
+            'villes' => $villes,
+            'formVille' => $formRecherche->createView(),
+
         ]);
     }
     #[IsGranted('ROLE_ADMIN')]
@@ -32,18 +48,16 @@ class VilleController extends AbstractController
         $form = $this->createForm(VilleType::class, $ville);
         $form->handleRequest($request);
 
+        //TODO: faire que le couple nom, code postal soit unique
         if ($form->isSubmitted() && $form->isValid()) {
             $ville = $form->getData();
 
             $entityManager->persist($ville);
             $entityManager->flush();
 
-            $allville = $villeRepository->findAll();
+            $villes = $villeRepository->findAll();
 
-            return $this->render('ville/index.html.twig', [
-                'controller_name' => 'villeController',
-                'allVilles' => $allville
-            ]);
+            return $this->redirectToRoute('app_ville');
         }
 
         return $this->render('ville/_creation.html.twig', [
@@ -55,7 +69,7 @@ class VilleController extends AbstractController
     #[Route('/ville/{id<\d+>}/modification', name: 'ville_modification', methods: ['GET', 'POST'])]
     public function modificationville(Request $request, Ville $ville, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(VilleModificationType::class, $ville);
+        $form = $this->createForm(VilleType::class, $ville);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
