@@ -8,7 +8,6 @@ use App\Entity\Utilisateur;
 use App\Form\ImportCSVType;
 use App\Form\UtilisateurModificationType;
 use App\Form\UtilisateurSearchType;
-use App\Repository\CampusRepository;
 use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -83,9 +82,15 @@ class UtilisateurController extends AbstractController
                     $this->addFlash('danger', 'Erreur lors de l\'upload du fichier');
                     return $this->redirectToRoute('utilisateur_liste');
                 }
-                
-                $this->processCsv($this->getParameter('uploads_directory') . '/' . $filename, $em, $userPasswordHasher);
-                $this->addFlash('success', 'Importation réussie !');
+
+                $errors = $this->processCsv($this->getParameter('uploads_directory') . '/' . $filename, $em, $userPasswordHasher);
+
+                if (empty($errors)) {
+                    $this->addFlash('success', 'Importation réussie !');
+                } else {
+                    foreach ($errors as $error) {
+                        $this->addFlash('danger', $error);                    }
+                }
             }
         }
 
@@ -183,10 +188,8 @@ class UtilisateurController extends AbstractController
             $this->addFlash('success', "L'étudiant(e) a bien été supprimé(e)");
         }
 
-        return $this->render('utilisateur/_liste.html.twig', [
-            'id' => $utilisateur->getId(),
-            'utilisateurs' => $utilisateurRepository->findAll()
-        ]);
+        return $this->redirectToRoute('utilisateur_liste');
+
     }
 
     private function processCsv(
@@ -197,35 +200,77 @@ class UtilisateurController extends AbstractController
         $csv = fopen($filePath, 'r');
         $header = fgetcsv($csv); // Lecture de l'en-tête
         $campusRepository = $em->getRepository(Campus::class);
+        $utilisateurRepository = $em->getRepository(Utilisateur::class);
+        $errors = [];
+
+        try {
+            $em->beginTransaction();
+            while (($row = fgetcsv($csv)) !== false) {
+                if (count($row) !== count($header)) {
+                    $errors[] = "Nombre de colonnes incorrect pour la ligne : " . json_encode($row);
+                    continue;
+                }
+                $userData = array_combine($header, $row);
+
+                if (empty($userData['nom']) || empty($userData['prenom']) || empty($userData['email']) || empty($userData['password']) || empty($userData['pseudo'])) {
+                    $errors[] = "Les champs requis sont manquants pour : " . json_encode($userData);
+                    continue;
+                }
+
+                $existingUserByEmail = $utilisateurRepository->findOneBy(['email' => $userData['email']]);
+                if ($existingUserByEmail) {
+                    $errors[] = "L'email est déjà utilisé pour : " . $userData['email'];
+                    continue;
+                }
+
+                $existingUserByPseudo = $utilisateurRepository->findOneBy(['pseudo' => $userData['pseudo']]);
+                if ($existingUserByPseudo) {
+                    $errors[] = "Le pseudo est déjà utilisé pour : " . $userData['pseudo'];
+                    continue;
+                }
+
+                if (isset($userData['campus'])) {
+                    $campus = $campusRepository->findOneBy(['id' => $userData['campus']]);
+                    if (!$campus) {
+                        $errors[] = "Le campus est manquant pour : " . json_encode($userData);
+                        continue;
+                    }
+                }
+
+                $user = new Utilisateur();
+                $user->setNom($userData['nom']);
+                $user->setPrenom($userData['prenom']);
+                $user->setEmail($userData['email']);
+                $user->setPseudo($userData['pseudo']);
+                $user->setTelephone($userData['telephone']);
+                $user->setCampus($campus);
 
 
-        while (($row = fgetcsv($csv)) !== false) {
-            $userData = array_combine($header, $row); // Associer les colonnes avec les valeurs
+                /** @var string $plainPassword */
+                $plainPassword = $userData['password'];
+                $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
 
-            // Création d'un nouvel utilisateur
-            $user = new Utilisateur();
-            $user->setNom($userData['nom']);
-            $user->setPrenom($userData['prenom']);
-            $user->setEmail($userData['email']);
-            $user->setPseudo($userData['pseudo']);
-            $user->setCampus($campusRepository->findOneBy(['id' => $userData['campus']]));
+                $user->setRoles(['ROLE_USER']);
+                $user->setEstActif(true);
+
+                $em->persist($user);
+            }
+            if (empty($errors)) {
+                $em->flush();
+                $em->commit();
+            } else {
+                $em->rollback();
+            }
 
 
-            // Encodage du mot de passe
-            /** @var string $plainPassword */
-            $plainPassword = $userData['password'];
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
-
-            // Définir d'autres champs comme les rôles
-            $user->setRoles(['ROLE_USER']);
-            $user->setEstActif(true);
-
-            $em->persist($user);
+        } catch (\Exception $e) {
+            $em->rollback();
+            $errors[] = "Une erreur est survenue : " . $e->getMessage();
+        } finally {
+            fclose($csv);
         }
 
-        fclose($csv);
-
-        $em->flush();
+        return $errors;
     }
 
 }

@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %} Les utilisateurs {% endblock %}
 
 {% block body %}
     <div id="title" class="text-center mt-3">
@@ -105,8 +105,16 @@
 
     <div class="container">
         {{ form_start(formUpload) }}
-        <div class="col-1 d-flex justify-content-start align-items-center">
-            <button type="submit" class="btn btn-outline-warning btn-sm me-2 fas fa-download" title="télécharger le fichier"></button>
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <div class="form-group d-flex align-items-center">
+                    {{ form_label(formUpload.csvFile, null, {'label_attr': {'class': 'me-2'}}) }}
+                    {{ form_row(formUpload.csvFile, {'label': false, 'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-outline-warning btn-sm fas fa-download" title="Télécharger le fichier"></button>
+            </div>
         </div>
         {{ form_end(formUpload) }}
     </div>
