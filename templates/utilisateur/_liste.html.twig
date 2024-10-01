@@ -1,10 +1,47 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}{{ title }}{% endblock %}
+
 {% block body %}
     <div id="title" class="text-center mt-3">
         <h1>Gérer les utilisateurs</h1>
     </div>
+    <div class="container">
+        {{ form_start(formRecherche, {'attr': {'id': 'filterForm'}}) }}
+        <div class="row" id="inputs">
+            <!-- Search field -->
+            <!-- Search field -->
+            <div class="col-6 d-flex align-items-center">
+                <div class="form-group d-flex align-items-center mb-0 w-100">
+                    {{ form_label(formRecherche.search, null, {'label_attr': {'class': 'me-2'}}) }}
+                    {{ form_widget(formRecherche.search, {'attr': {'class': 'form-control', 'placeholder': "nom, prenom, pseudo"}}) }}
+                </div>
+            </div>
 
+            <!-- Campus field -->
+            <div class="col-3 d-flex align-items-center">
+                <div class="form-group d-flex align-items-center mb-0">
+                    {{ form_label(formRecherche.campus, null, {'label_attr': {'class': 'me-2'}}) }}
+                    {{ form_widget(formRecherche.campus, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+            <!-- Est Actif Checkbox -->
+            <div class="col-2 d-flex align-items-center">
+                <div class="form-check d-flex align-items-center mb-0">
+                    {{ form_widget(formRecherche.estActif, {'attr': {'class': 'form-check-input me-2'}}) }}
+                    {{ form_label(formRecherche.estActif, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                </div>
+            </div>
+
+            <!-- Submit and Reset buttons -->
+            <div class="col-1 d-flex justify-content-start align-items-center">
+                <button type="submit" class="btn btn-info btn-sm me-2 fas fa-search" title="Recherche"></button>
+                <a class="btn btn-danger btn-sm fas fa-undo" title="Réinitialiser recherche" href="{{ path('utilisateur_liste') }}"></a>
+            </div>
+        </div>
+        {{ form_end(formRecherche) }}
+    </div>
     <div class="container">
     <div class="row d-flex justify-content-center mt-5">
         <div style="max-height: 400px; overflow-y: auto;">
@@ -52,7 +89,7 @@
                                 </form>
                             </div>
                         </td>
-                        <td class="text-center">{{ utilisateur.estActif ? 'Oui' : 'Non' }}</td>
+                        <td class="text-center"> {% if utilisateur.estActif %} ✔️ {% endif %}</td>
                     </tr>
                 {% else %}
                     <tr>

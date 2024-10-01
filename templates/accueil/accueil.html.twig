@@ -52,7 +52,7 @@
                 </div>
             </div>
 
-            <div class="col-3 d-flex flex-column mt-4">
+
                 <div class="form-check d-flex align-items-center mb-2">
                     {{ form_widget(form.estOrganisateur, {'attr': {'class': 'form-check-input me-2'}}) }}
                     {{ form_label(form.estOrganisateur, null, {'label_attr': {'class': 'form-check-label'}}) }}
@@ -132,7 +132,7 @@
                                        onclick="return confirm('Voulez-vous vraiment vous désinscrire ?');"></a>
                                 {% else %}
                                     {% if sortie.etat.getLibelle() != "Cloturée" %}
-                                        <a class="btn btn-success fas fa-user-plus" title="S'incrire" href="{{ path('sorties_inscrire', {'id': sortie.id}) }}"
+                                        <a class="btn btn-outline-success fas fa-user-plus" title="S'incrire" href="{{ path('sorties_inscrire', {'id': sortie.id}) }}"
                                            onclick="return confirm('Souhaitez-vous vous inscrire ?');"></a>
                                     {% endif %}
                                 {% endif %}

@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\DTO\RechercheVille;
 use App\Entity\Ville;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,6 +17,13 @@ class VilleRepository extends ServiceEntityRepository
         parent::__construct($registry, Ville::class);
     }
 
+    public function rechercheVilleAvecFiltre(RechercheVille $searchVille) {
+        return $this->createQueryBuilder('v')
+            ->where('v.nom LIKE :search')
+            ->setParameter('search', '%' . $searchVille->searchVille . '%')
+            ->getQuery()
+            ->getResult();
+    }
     //    /**
     //     * @return Ville[] Returns an array of Ville objects
     //     */

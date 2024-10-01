@@ -6,8 +6,11 @@ use App\Repository\VilleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: VilleRepository::class)]
+#[ORM\UniqueConstraint(name: 'UNIQ_COUPLE_VILLE_CODEPOSTAL', fields: ['nom', 'code_postal'])]
+#[UniqueEntity(fields: ['nom', 'codePostal'], message: 'le couple nom/code postal doit être unique')]
 class Ville
 {
     #[ORM\Id]
