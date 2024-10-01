@@ -183,13 +183,17 @@ class UtilisateurController extends AbstractController
         UtilisateurRepository $utilisateurRepository,
     ): Response {
         if ($this->isCsrfTokenValid('delete'.$utilisateur->getId(), $request->request->get('_token'))) {
+            $estParticipant = $utilisateurRepository->estInscritASortiesNonHistorisee($utilisateur);
+            if($estParticipant){
+                $this->addFlash('danger', "Cet.te utilisateur.trice ne peut pas être supprimé.e car iel participe à des sorties.");
+                return $this->redirectToRoute('utilisateur_liste');
+            }
             $entityManager->remove($utilisateur);
             $entityManager->flush();
-            $this->addFlash('success', "L'étudiant(e) a bien été supprimé(e)");
+            $this->addFlash('success', "Cet.te utilisateur.trice a bien été supprimé.e");
         }
 
         return $this->redirectToRoute('utilisateur_liste');
-
     }
 
     private function processCsv(
