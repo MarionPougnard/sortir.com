@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %} Les utilisateurs {% endblock %}
 
 {% block body %}
     <div id="title" class="text-center mt-3">
@@ -9,8 +9,6 @@
     <div class="container">
         {{ form_start(formRecherche, {'attr': {'id': 'filterForm'}}) }}
         <div class="row" id="inputs">
-            <!-- Search field -->
-            <!-- Search field -->
             <div class="col-6 d-flex align-items-center">
                 <div class="form-group d-flex align-items-center mb-0 w-100">
                     {{ form_label(formRecherche.search, null, {'label_attr': {'class': 'me-2'}}) }}
@@ -18,7 +16,6 @@
                 </div>
             </div>
 
-            <!-- Campus field -->
             <div class="col-3 d-flex align-items-center">
                 <div class="form-group d-flex align-items-center mb-0">
                     {{ form_label(formRecherche.campus, null, {'label_attr': {'class': 'me-2'}}) }}
@@ -26,7 +23,6 @@
                 </div>
             </div>
 
-            <!-- Est Actif Checkbox -->
             <div class="col-2 d-flex align-items-center">
                 <div class="form-check d-flex align-items-center mb-0">
                     {{ form_widget(formRecherche.estActif, {'attr': {'class': 'form-check-input me-2'}}) }}
@@ -34,10 +30,9 @@
                 </div>
             </div>
 
-            <!-- Submit and Reset buttons -->
             <div class="col-1 d-flex justify-content-start align-items-center">
-                <button type="submit" class="btn btn-info btn-sm me-2 fas fa-search" title="Recherche"></button>
-                <a class="btn btn-danger btn-sm fas fa-undo" title="Réinitialiser recherche" href="{{ path('utilisateur_liste') }}"></a>
+                <button type="submit" class="btn btn-outline-info btn-sm me-2 fas fa-search" title="Recherche"></button>
+                <a class="btn btn-outline-danger btn-sm fas fa-undo" title="Réinitialiser recherche" href="{{ path('utilisateur_liste') }}"></a>
             </div>
         </div>
         {{ form_end(formRecherche) }}
@@ -78,14 +73,14 @@
                             <div class="d-flex justify-content-around">
                                 <form method="post"
                                       action="{{ path('admin_utilisateur_modification', { 'id': utilisateur.id }) }}">
-                                    <button class="btn btn-success px-4k">Modifier</button>
+                                    <button class="btn btn-outline-success px-4k fas fa-edit" title="Modifier"></button>
                                 </form>
 
                                 <form method="post" action="{{ path('suppression_profil', { 'id': utilisateur.id }) }}"
                                       onsubmit="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');">
                                     <input type="hidden" name="_token"
                                            value="{{ csrf_token('delete' ~ utilisateur.id) }}">
-                                    <button class="btn btn-danger px-4k">Supprimer</button>
+                                    <button class="btn btn-outline-danger px-4k fas fa-trash" title="Supprimer"></button>
                                 </form>
                             </div>
                         </td>
@@ -107,5 +102,28 @@
             <a href="{{ path('app_register') }}" class="btn btn-primary d-inline-block">Ajouter</a>
         </div>
     </div>
+
+    <div class="container">
+        {{ form_start(formUpload) }}
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <div class="form-group d-flex align-items-center">
+                    {{ form_label(formUpload.csvFile, null, {'label_attr': {'class': 'me-2'}}) }}
+                    {{ form_row(formUpload.csvFile, {'label': false, 'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-outline-warning btn-sm fas fa-download" title="Télécharger le fichier"></button>
+            </div>
+        </div>
+        {{ form_end(formUpload) }}
+    </div>
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('danger') %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
+
 
 {% endblock %}

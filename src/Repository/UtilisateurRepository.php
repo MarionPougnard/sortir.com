@@ -5,16 +5,27 @@ namespace App\Repository;
 use App\DTO\RechercheUtilisateur;
 use App\Entity\Utilisateur;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * @extends ServiceEntityRepository<Utilisateur>
- */
-class UtilisateurRepository extends ServiceEntityRepository
+class UtilisateurRepository extends ServiceEntityRepository implements UserLoaderInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Utilisateur::class);
+    }
+
+
+    public function find(mixed $id, int|LockMode|null $lockMode = null, ?int $lockVersion = null): object|null
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.id = :id')
+            ->setParameter('id', $id)
+            ->innerJoin('u.campus', 'campus')->addSelect('campus')
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function chercheUtilisateurAvecFiltre(RechercheUtilisateur $filtres) {
@@ -64,4 +75,17 @@ class UtilisateurRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function loadUserByIdentifier(string $identifier): ?UserInterface
+    {
+        $entityManager = $this->getEntityManager();
+
+        return $entityManager->createQuery(
+            'SELECT u
+                FROM App\Entity\Utilisateur u
+                WHERE u.pseudo = :query
+                OR u.email = :query'
+        )
+            ->setParameter('query', $identifier)
+            ->getOneOrNullResult();
+    }
 }
