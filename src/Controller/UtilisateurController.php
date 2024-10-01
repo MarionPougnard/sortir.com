@@ -6,6 +6,7 @@ use App\Entity\Sortie;
 use App\Entity\Utilisateur;
 use App\Form\UtilisateurModificationType;
 use App\Repository\UtilisateurRepository;
+use ContainerEWXSNXm\getSecurity_RoleHierarchyService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -34,6 +35,7 @@ class UtilisateurController extends AbstractController
         return $this->render('utilisateur/_profil.html.twig', [
             'utilisateur' => $utilisateur,
             'estutilisateur' => $estutilisateur,
+            'isAdmin' => in_array('ROLE_ADMIN', $this->getUser()->getRoles(), true)
        ]);
     }
 
