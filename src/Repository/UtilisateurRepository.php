@@ -51,6 +51,19 @@ class UtilisateurRepository extends ServiceEntityRepository implements UserLoade
 
         return $queryBuilder->getQuery()->getResult();
     }
+
+    public function estInscritASortiesNonHistorisee(Utilisateur $utilisateur)
+    {
+        return $this->createQueryBuilder('u')
+                ->innerJoin('u.sortiesParticipees', 's')
+                ->innerJoin('s.etat', 'e')
+                ->where('u.id = :userId')
+                ->andWhere('e.libelle != :historized')
+                ->setParameter('userId', $utilisateur->getId())
+                ->setParameter('historized', 'Historisée')
+                ->getQuery()
+                ->getOneOrNullResult() !== null;
+    }
     //    /**
     //     * @return Utilisateur[] Returns an array of Utilisateur objects
     //     */
