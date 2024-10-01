@@ -3,16 +3,20 @@
 namespace App\Controller;
 
 use App\DTO\RechercheUtilisateur;
+use App\Entity\Campus;
 use App\Entity\Utilisateur;
-use App\Form\RechercheSortieFormType;
+use App\Form\ImportCSVType;
 use App\Form\UtilisateurModificationType;
 use App\Form\UtilisateurSearchType;
+use App\Repository\CampusRepository;
 use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -27,6 +31,7 @@ class UtilisateurController extends AbstractController
         UserInterface $utilisateurConnecte
     ): Response
     {
+
         if ($utilisateur === null) {
             $utilisateur = $utilisateurConnecte;
         }
@@ -43,7 +48,9 @@ class UtilisateurController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function listeUtilisateurs(
         Request $request,
-        UtilisateurRepository $utilisateurRepository
+        UtilisateurRepository $utilisateurRepository,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $userPasswordHasher,
     ): Response
     {
         $user = $this->getUser();
@@ -61,10 +68,32 @@ class UtilisateurController extends AbstractController
             $utilisateurs = $utilisateurRepository->chercheUtilisateurAvecFiltre($filtreRecherche);
         }
 
+        $formUpload = $this->createForm(ImportCsvType::class);
+        $formUpload->handleRequest($request);
+
+        if ($formUpload->isSubmitted() && $formUpload->isValid()) {
+            $file = $formUpload->get('csvFile')->getData();
+
+            if ($file) {
+                $filename = uniqid() . '.' . $file->guessExtension();
+
+                try {
+                    $file->move($this->getParameter('uploads_directory'), $filename);
+                } catch (FileException $e) {
+                    $this->addFlash('danger', 'Erreur lors de l\'upload du fichier');
+                    return $this->redirectToRoute('utilisateur_liste');
+                }
+                
+                $this->processCsv($this->getParameter('uploads_directory') . '/' . $filename, $em, $userPasswordHasher);
+                $this->addFlash('success', 'Importation réussie !');
+            }
+        }
+
         return $this->render('utilisateur/_liste.html.twig', [
             'title' => 'liste des utilisateurs',
             'utilisateurs' => $utilisateurs,
             'formRecherche' => $formRecherche->createView(),
+            'formUpload' => $formUpload->createView(),
         ]);
     }
 
@@ -158,6 +187,45 @@ class UtilisateurController extends AbstractController
             'id' => $utilisateur->getId(),
             'utilisateurs' => $utilisateurRepository->findAll()
         ]);
+    }
+
+    private function processCsv(
+        $filePath,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $userPasswordHasher)
+    {
+        $csv = fopen($filePath, 'r');
+        $header = fgetcsv($csv); // Lecture de l'en-tête
+        $campusRepository = $em->getRepository(Campus::class);
+
+
+        while (($row = fgetcsv($csv)) !== false) {
+            $userData = array_combine($header, $row); // Associer les colonnes avec les valeurs
+
+            // Création d'un nouvel utilisateur
+            $user = new Utilisateur();
+            $user->setNom($userData['nom']);
+            $user->setPrenom($userData['prenom']);
+            $user->setEmail($userData['email']);
+            $user->setPseudo($userData['pseudo']);
+            $user->setCampus($campusRepository->findOneBy(['id' => $userData['campus']]));
+
+
+            // Encodage du mot de passe
+            /** @var string $plainPassword */
+            $plainPassword = $userData['password'];
+            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+
+            // Définir d'autres champs comme les rôles
+            $user->setRoles(['ROLE_USER']);
+            $user->setEstActif(true);
+
+            $em->persist($user);
+        }
+
+        fclose($csv);
+
+        $em->flush();
     }
 
 }
