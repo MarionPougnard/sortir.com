@@ -38,8 +38,53 @@
                             <div class="mb-4">
                                 {{ form_row(sortieform.ville, {'attr': {'class': "form-control"}}) }}
                             </div>
-                            <div class="mb-4">
-                                {{ form_row(sortieform.lieu, {'attr': {'class': "form-control"}}) }}
+                            <div class="row mb-4">
+                                <div class="col-11">
+                                    {{ form_row(sortieform.lieu, {'attr': {'class': "form-control"}}) }}
+                                </div>
+
+                                <!-- Icône "+" -->
+                                <div class="col-1 d-flex align-items-center justify-content-end mt-3">
+                                    <i class="fas fa-plus" data-bs-toggle="modal" data-bs-target="#createPlaceModal"
+                                       style="font-size: 24px; cursor: pointer;" id="ajoutLieu"></i>
+                                </div>
+
+                                <!-- Modal Bootstrap -->
+                                <div class="modal fade" id="createPlaceModal" tabindex="-1" aria-labelledby="createPlaceModal" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title text-black" id="createPlaceModalLabel">Créer un nouveau lieu</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form id="LieuForm" action="{{ path('sorties_creer') }}" method="POST">
+                                                    {{ form_start(lieuForm) }}
+                                                    <div class="mb-3">
+                                                        {{ form_row(lieuForm.nom) }}
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        {{ form_row(lieuForm.rue) }}
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-6">
+                                                        {{ form_row(lieuForm.latitude) }}
+                                                        </div>
+                                                        <div class="col-6">
+                                                            {{ form_row(lieuForm.longitude) }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        {{ form_widget(lieuForm.ville, {'attr': {'class': 'form-control'}}) }}
+                                                    </div>
+                                                    {{ form_widget(lieuForm.save, {'attr': {'class': 'btn btn-success'}}) }}
+                                                </form>
+                                                {{ form_end(lieuForm) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="mb-4">
                                 {{ form_row(sortieform.rue, {'attr': {'class': "form-control"}}) }}
@@ -63,7 +108,9 @@
 
                     <div class="d-flex justify-content-center">
                         <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                            <button type="submit" name="action" value="enregistrer" class="btn btn-success">Enregistrer</button>
+                            <button type="submit" name="action" value="enregistrer" class="btn btn-success">
+                                Enregistrer
+                            </button>
                         </div>
                         <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                             <button type="submit" name="action" value="publier" class="btn btn-warning">Publier</button>
@@ -144,6 +191,33 @@
                     .catch(error => console.error('Erreur lors de la récupération des détails du lieu:', error));
             }
         });
+
+        $(document).ready(function() {
+            $('#lieuForm').on('submit', function(e) {
+                e.preventDefault(); // Empêche le comportement par défaut de soumission du formulaire
+
+                var form = $(this);
+                $.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    data: form.serialize(), // Sérialiser les données du formulaire
+                    success: function(response) {
+                        // Si le lieu est créé avec succès, on ferme la modal et met à jour la liste des lieux
+                        alert(response.message);
+                        $('#createPlaceModal').modal('hide'); // Fermer la modal
+                        // Mettre à jour dynamiquement la liste des lieux dans la sortie
+                        $('#lieuxList').append('<option value="' + response.lieu.id + '">' + response.lieu.nom + '</option>');
+                    },
+                    error: function(xhr) {
+                        // Si une erreur survient, on remplace le formulaire dans la modal par celui retourné avec les erreurs
+                        xhr.responseJSON = undefined;
+                        $('#modalBody').html(xhr.responseJSON.form);
+                    }
+                });
+            });
+        });
+
+
     </script>
 
 {% endblock %}

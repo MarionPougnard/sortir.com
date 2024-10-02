@@ -33,6 +33,10 @@ h1, h2, h3, h4 {
     color: white !important;
 }
 
+#ajoutLieu:hover {
+    color: #FFAA00;
+}
+
 header {
     padding: 10px 30px 10px 30px;
     background: /*linear-gradient(
