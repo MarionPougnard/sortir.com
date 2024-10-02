@@ -1,102 +1,70 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}
     {{ parent() ~ title }}
 {% endblock %}
-
 {% block body %}
-    <h2 class="text-center fw-bold mb-5 mx-1 mx-md-4 mt-4">{{ title }}</h2>
-    <div class="container h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-lg-12 col-xl-12">
-                <div class="text-black" style="border-radius: 25px;">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="mb-4">
-                                <label for="nom" class="form-label">Nom de la sortie</label>
-                                <input type="text" class="form-control" id="nom" value="{{ sortie.nom }}" readonly>
-                            </div>
-                            <div class="mb-4">
-                                <label for="dateHeureDebut" class="form-label">Date et Heure de Début</label>
-                                <input type="datetime-local" class="form-control" id="dateHeureDebut" value="{{ sortie.dateHeureDebut|date('Y-m-d H:i') }}" readonly>
-                            </div>
-                            <div class="mb-4">
-                                <label for="dateLimiteInscription" class="form-label">Date Limite d'Inscription</label>
-                                <input type="datetime-local" class="form-control" id="dateLimiteInscription" value="{{ sortie.dateLimiteInscription|date('Y-m-d H:i') }}" readonly>
-                            </div>
-                            <div class="mb-4">
-                                <label for="nbInscriptionMax" class="form-label">Nombre de places</label>
-                                <input type="text" class="form-control" id="nbInscriptionMax" value="{{ sortie.nbInscriptionMax }}" readonly>
-                            </div>
-                            <div class="mb-4">
-                                <label for="duree" class="form-label">Durée (minutes)</label>
-                                <input type="text" class="form-control" id="duree" value="{{ sortie.duree }}" readonly>
-                            </div>
+
+    <div id="title" class="text-center mt-2">
+        <h1 class="text-white">{{ sortie.nom }}</h1>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row d-flex justify-content-center">
+            <div class="col-6">
+                <div class="sortie-info rounded-3 overflow-hidden shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex mb-3">
+                            <div class="fas fa-calendar-alt me-3 text-muted"></div>
+                            <div>{{ sortie.dateHeureDebut|date("d/m/Y H:i") }}</div>
                         </div>
-                        <div class="col-6">
-                            <div class="mb-4">
-                                <label for="campus" class="form-label">Campus</label>
-                                <input type="text" class="form-control" id="campus" value="{{ sortie.campus.nom }}" readonly>
-                            </div>
-                            <div class="mb-4">
-                                <label for="ville" class="form-label">Ville</label>
-                                <input type="text" class="form-control" id="ville" value="{{ sortie.lieu.ville.nom }}" readonly>
-                            </div>
-                            <div class="mb-4">
-                                <label for="lieu" class="form-label">Lieu</label>
-                                <input type="text" class="form-control" id="lieu" value="{{ sortie.lieu.nom }}" readonly>
-                            </div>
-                            <div class="mb-4">
-                                <label for="rue" class="form-label">Rue</label>
-                                <input type="text" class="form-control" id="rue" value="{{ sortie.lieu.rue }}" readonly>
-                            </div>
-                            <div class="mb-4">
-                                <label for="latitude">Latitude / Longitude</label>
-                                <div class="d-flex">
-                                    <input type="text" class="form-control me-2" id="latitude" value="{{ sortie.lieu.latitude }}" readonly>
-                                    <input type="text" class="form-control" id="longitude" value="{{ sortie.lieu.longitude }}" readonly>
-                                </div>
-                            </div>
+                        <div class="d-flex mb-3">
+                            <div class="fas fa-map-marker-alt me-3 text-muted"></div>
+                            <div>{{ sortie.lieu.nom }}, {{ sortie.lieu.ville.nom }}</div>
+                        </div>
+                        <div class="d-flex mb-3">
+                            <div class="fas fa-users me-3 text-muted"></div>
+                            <div>Inscrits: {{ sortie.participants.count }} / {{ sortie.nbInscriptionMax }}</div>
+                        </div>
+                        <div class="d-flex mb-3">
+                            <div class="fas fa-clock me-3 text-muted"></div>
+                            <div>{{ sortie.duree }} minutes</div>
+                        </div>
+                        <p class="card-text">{{ sortie.infosSortie }}</p>
+                        <div class="d-flex justify-content-between mt-4"><a
+                                    href="{{ path('utilisateur_profil_id', {'id': sortie.organisateur.id}) }}"><p
+                                        class="text-muted mb-0">Organisé par: {{ sortie.organisateur.pseudo }}</p>
+                            </a> {% if sortie.etat.getLibelle() == "Ouverte" or sortie.etat.getLibelle() == "Cloturée" %}
+                                {% if utilisateur in sortie.participants %}
+                                    <a class="btn btn-danger fas fa-user-times" title="Se désinscrire"
+                                       href="{{ path('sorties_desinscrire', {'id': sortie.id}) }}"
+                                       onclick="return confirm('Voulez-vous vraiment vous désinscrire ?');"></a>
+                                {% else %}                                    {% if sortie.etat.getLibelle() != "Cloturée" %}
+                                    <a class="btn fas fa-user-plus" title="S'incrire"
+                                       href="{{ path('sorties_inscrire', {'id': sortie.id}) }}"
+                                       onclick="return confirm('Souhaitez-vous vous inscrire ?');"></a>
+                                {% endif %}
+                                {% endif %}
+                            {% endif %}
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-12 mb-4">
-                            <div class="form-outline">
-                                <label for="infosSortie" class="form-label">Informations sur la Sortie</label>
-                                <textarea class="form-control" id="infosSortie" rows="4" readonly>{{ sortie.infosSortie }}</textarea>
-                            </div>
-                        </div>
-                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-6 d-flex align-items-center">
+                <div class="row ps-5">
+                    <h4 class="mb-3">Participants</h4>
+
+                    <ul class="list-group participants-list rounded-3 overflow-hidden shadow-sm">
+                        {% for participant in sortie.participants %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center"><a
+                                        href="{{ path('utilisateur_profil_id', {'id': participant.id}) }}">{{ participant.pseudo }}</a>
+                                <span class="badge bg-primary rounded-pill">{{ participant.prenom }} {{ participant.nom }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
         </div>
-        <h4>Liste des participants inscrits</h4>
-        <table class="table table-striped">
-            <thead>
-            <th scope="col">Pseudo</th>
-            <th scope="col">Nom</th>
-            </thead>
-            <tbody>
-            {% for participant in sortie.participants %}
-                <tr>
-                    <td><a href="{{ path('utilisateur_profil_id', {'id': participant.id}) }}">{{ participant.pseudo }}</a></td>
-                    <td>{{ participant.prenom }} {{ participant.nom }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        {% if sortie.etat.getLibelle() == "Ouverte" or sortie.etat.getLibelle() == "Cloturée" %}
-            {% if utilisateur in sortie.participants %}
-                <a class="btn btn-danger fas fa-user-times" title="Se désinscrire" href="{{ path('sorties_desinscrire', {'id': sortie.id}) }}"
-                   onclick="return confirm('Voulez-vous vraiment vous désinscrire ?');"></a>
-            {% else %}
-                {% if sortie.etat.getLibelle() != "Cloturée" %}
-                    <a class="btn btn-success fas fa-user-plus" title="S'incrire" href="{{ path('sorties_inscrire', {'id': sortie.id}) }}"
-                       onclick="return confirm('Souhaitez-vous vous inscrire ?');"></a>
-                {% endif %}
-            {% endif %}
-        {% endif %}
     </div>
-
-
 {% endblock %}
