@@ -119,15 +119,13 @@
 
                 <!-- Bouton "Enregistrer" -->
                 <div class="form-group d-flex justify-content-end mt-5">
-                    <a href="{{ path('utilisateur_liste') }}" class="btn btn-secondary me-3">Retour</a>
+                    <a href="javascript:history.back()" class="btn btn-secondary me-3">Retour</a>
                     <button type="submit" class='btn btn-success'>Enregistrer</button>
-{#                    {{ form_widget(modifprofilform.save, {'attr': {'class': 'btn btn-success'}}) }}#}
                 </div>
 
                 {{ form_end(modifprofilform) }}
             </div>
         </div>
     </div>
-
 
 {% endblock %}
