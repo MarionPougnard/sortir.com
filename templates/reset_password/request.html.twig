@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mot de passe oublié{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                {% for flash_error in app.flashes('reset_password_error') %}
+                    <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+                {% endfor %}
+
+                <h1 class="text-center mb-4">Mot de passe oublié ?</h1>
+
+                <div class="card p-4">
+                    {{ form_start(requestForm) }}
+                    {{ form_row(requestForm.email, {'placeholder': "Email"}) }}
+                    <div class="mb-3">
+                        <div>
+                            Saisissez et validez l'adresse e-mail de votre compte.
+                        </div>
+                        <div>
+                            Vous recevrez ensuite par e-mail un lien vers une page vous permettant de créer facilement votre nouveau mot de passe.
+                        </div>
+                    </div>
+
+                    <button class="btn btn-light w-100">Envoyer l'email</button>
+                    {{ form_end(requestForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

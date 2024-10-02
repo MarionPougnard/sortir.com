@@ -12,10 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_USER')]
 class LieuController extends AbstractController
 {
 
-    #[IsGranted('ROLE_USER')]
     #[Route('/lieux/{ville}', name: 'lieux_par_ville', methods: ['GET'])]
     public function getLieuxByVille(Ville $ville, EntityManagerInterface $em): JsonResponse
     {

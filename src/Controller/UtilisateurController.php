@@ -165,6 +165,13 @@ class UtilisateurController extends AbstractController
                     $utilisateur->setPhoto($fileName);
                 }
 
+                $isActive = $form->get('estActif')->getData();
+                if ($isActive) {
+                    $utilisateur->setRoles(['ROLE_USER']);
+                } else {
+                    $utilisateur->setRoles(['ROLE_USER_INACTIVE']);
+                }
+
                 $entityManager->flush();
 
                 return $this->redirectToRoute('utilisateur_liste');
