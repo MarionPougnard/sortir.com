@@ -21,7 +21,7 @@ class RechercheSortieFormType extends AbstractType
                 'label' => 'Campus',
                 'class' => Campus::class,
                 'choice_label' => 'nom',
-                'placeholder' => '--Sélectionner un campus--',
+                'placeholder' => '-- Sélectionner un campus --',
                 'required' => false,
             ])
             ->add('search', TextType::class, [

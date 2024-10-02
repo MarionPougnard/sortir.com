@@ -49,11 +49,11 @@ class SortieRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('s');
 
-        $etatHistorisee = $this->etatRepository->findOneByLibelle('Historisée');
-        if ($etatHistorisee) {
-            $queryBuilder->andWhere('s.etat != :etatHistorisee')
-                ->setParameter('etatHistorisee', $etatHistorisee->getId());
-        }
+        $queryBuilder->innerJoin('s.etat', 'etat', Join::WITH, 'etat.libelle != :etat')->addSelect('etat')
+            ->innerJoin('s.organisateur', 'organisateur')->addSelect('organisateur')
+            ->leftJoin('s.participants', 'participants')->addSelect('participants')
+            ->innerJoin('s.campus', 'campus')->addSelect('campus')
+            ->setParameter('etat', 'Historisée');
 
         if (isset($filtres->search) && $filtres->search) {
             $queryBuilder->andWhere('s.nom LIKE :search')

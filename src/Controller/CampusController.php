@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\DTO\RechercheCampus;
 use App\Entity\Campus;
 use App\Entity\Utilisateur;
 use App\Form\CampusModificationType;
+use App\Form\CampusSearchType;
 use App\Form\CampusType;
 use App\Form\RegistrationFormType;
 use App\Form\UtilisateurModificationType;
@@ -22,13 +24,23 @@ class CampusController extends AbstractController
 
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/campus', name: 'app_campus')]
-    public function index(CampusRepository $campusRepository): Response
+    public function index(
+        Request $request,
+        CampusRepository $campusRepository): Response
     {
-        $allCampus = $campusRepository->findAll();
+        $filtreRecherche = new RechercheCampus();
+        $formRecherche = $this->createForm(CampusSearchType::class, $filtreRecherche);
+        $formRecherche->handleRequest($request);
+        $campuses = $campusRepository->findAll();
 
+        if ($formRecherche->isSubmitted() && $formRecherche->isValid()) {
+            $filtreRecherche = $formRecherche->getData();
+            $campuses = $campusRepository->rechercheCampusAvecFiltre($filtreRecherche);
+        }
         return $this->render('campus/index.html.twig', [
-            'controller_name' => 'CampusController',
-            'allCampus' => $allCampus
+            'title' => 'les campus',
+            'campuses' => $campuses,
+            'formRecherche' => $formRecherche->createView(),
         ]);
     }
 

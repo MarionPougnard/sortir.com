@@ -1,8 +1,12 @@
-html, body {
-    height:100%;
-    margin: 0;
+body {
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background-image: url('/img/background2.png');
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: white !important;
 }
 
 .containerbody {
@@ -11,13 +15,32 @@ html, body {
     min-height: 100vh;
 }
 
+.card-body {
+    background-color: #FFAA00;
+    background: linear-gradient(
+            rgba(255, 170, 0, 0.5),
+            rgba(255, 170, 0, 0.5)
+    )
+}
+
 .content {
     flex-grow: 1;
 }
 
+h1, h2, h3, h4 {
+    font-family: "Indie Flower", cursive;
+    font-size: 50px;
+    color: white !important;
+}
+
 header {
     padding: 10px 30px 10px 30px;
-    background-color: #FFFCF5;
+    background: /*linear-gradient(
+            rgba(255, 255, 255, 0.5),
+            rgba(255, 255, 255, 0.5)
+    ),*/ transparent !important;
+    color: #FFAA00;
+    font-weight: bolder;
 }
 
 header .container {
@@ -27,7 +50,7 @@ header .container {
 }
 
 header a {
-    color: #4CB24A;
+    color: #FFAA00;
 }
 
 header > div {
@@ -52,21 +75,61 @@ header:hover img {
 
 .navbar-brand {
     margin-left: 100px;
-    color : #4CB24A;
-    font-size : 25px;
+    color: #FFAA00;
+    font-size: 30px;
 }
 
 .navbar-brand:hover {
-    color : #FFAA00;
+    color: #FFAA00;
 }
 
 .nav-link {
-    color : #4CB24A;
+    color: #FFAA00;
     font-size: 20px;
 }
 
 .nav-link:hover {
-    color : #FFAA00;
+    color: #FFAA00;
+}
+
+.hover-underline {
+    position: relative; /* Nécessaire pour utiliser le pseudo-élément */
+    transition: color 0.3s ease; /* Animation de la couleur */
+}
+
+.hover-underline::after {
+    content: ''; /* Nécessaire pour créer un élément pseudo */
+    position: absolute; /* Positionnement par rapport au texte */
+    left: 0; /* Aligne le trait à gauche */
+    right: 0; /* Aligne le trait à droite */
+    bottom: -3px; /* Espace entre le texte et le trait */
+    height: 2px; /* Épaisseur du trait */
+    background-color: currentColor; /* Couleur du trait, utilise la couleur actuelle du texte */
+    transform: scaleX(0); /* Initialement pas de trait */
+    transition: transform 0.3s ease; /* Animation douce pour l'apparition */
+}
+
+.hover-underline:hover::after {
+    transform: scaleX(1); /* Affiche le trait au survol */
+}
+
+.btn:hover {
+    background-color: #FFAA00;
+    border-color: #FFAA00;
+}
+
+.blur-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%);
+    backdrop-filter: blur(5px);
+}
+
+#deconnexion {
+
 }
 
 main {
@@ -74,19 +137,38 @@ main {
     margin-top: 20px;
 }
 
+.card {
+    background: linear-gradient(
+            rgba(255, 255, 255, 0.5),
+            rgba(255, 255, 255, 0.5)
+    ); /* Ajustez l'alpha (0.5) pour plus ou moins de transparence */
+    border: none; /* Supprimez la bordure si nécessaire */
+}
+
+.backgroundTable {
+    background: linear-gradient(
+            rgba(255, 255, 255, 0.5),
+            rgba(255, 255, 255, 0.5)
+    );
+}
+
 .photo_profil {
     height: 50px;
     width: auto;
 }
 
-.card-footer {
-    background-color: #FFFCF5;
-    color : #4CB24A;
+.footer {
+    background: /*linear-gradient(
+            rgba(255, 255, 255, 0.5),
+            rgba(255, 255, 255, 0.5)
+    ),*/ transparent !important;
+    color: #FFAA00;
     padding: 10px;
     text-align: center;
     width: 100%;
-    bottom:0;
+    bottom: 0;
     height: 110px;
+    font-weight: bolder;
 }
 
 .footer-logo {
@@ -98,35 +180,6 @@ main {
 
 footer:hover .footer-logo {
     transform: rotate(-345deg) scaleX(-1);
-}
-
-.home-hero h1,
-.home-hero p {
-    background-color: #2F414A;
-    color: #fff;
-    display: inline-block;
-    padding: 1rem 2rem;
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
-    -webkit-box-shadow: 0px 0px 8px 1px #000000;
-    box-shadow: 0px 0px 8px 1px #000000;
-    border-radius: 2px;
-}
-
-.home-hero h1 {
-    padding: 0.7rem 2rem 1rem 2rem;
-}
-
-.home-hero p {
-    background-color: #ffc107;
-    color: black;
-    font-weight: bold;
-    transform: rotate(-3deg);
-    margin-top: -10px;
-}
-
-.hero-content {
-    height: 80vh;
 }
 
 #map {

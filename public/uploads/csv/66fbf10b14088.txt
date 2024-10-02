@@ -1,0 +1,7 @@
+﻿"nom,prenom,email,password,pseudo,campus"
+"Dupont,Jean,jean.dupont@example.com,Password1,jdupont,19"
+",Pierre,pierre.martin@,Password2,pmartin,20"
+"Durand,Lucie,lucie.durand@example.com,Pass,ldurand,21"
+"Bernard,,sophie.bernard@example.com,Password4,sbernard,22"
+"Lemoine,Marc,marc.lemoine@example.com,Password5,,21"
+

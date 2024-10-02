@@ -144,7 +144,7 @@ class SortieController extends AbstractController
     ): Response
     {
         $user = $this->getUser();
-        if ($user !== $sortie->getOrganisateur()) {
+        if ($user !== $sortie->getOrganisateur() || !$user->setRoles('ROLE_ADMIN')) {
            $this->addFlash('error', 'Vous n\'êtes pas autorisé à annuler cette sortie.');
         }
         $etatAnnule = $entityManager->getRepository(Etat::class)->findOneBy(['libelle' => 'Annulée']);

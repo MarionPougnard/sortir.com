@@ -4,13 +4,11 @@ namespace App\Controller;
 
 use App\DTO\RechercheSortie;
 use App\Form\RechercheSortieFormType;
-use App\Repository\CampusRepository;
 use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -21,7 +19,6 @@ class AccueilController extends AbstractController
     public function index(
         Request $request,
         SortieRepository $sortieRepository,
-        EtatRepository $etatRepository,
         EntityManagerInterface $entityManager,
     )
     {
