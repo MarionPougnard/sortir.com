@@ -49,42 +49,6 @@
                                        style="font-size: 24px; cursor: pointer;" id="ajoutLieu"></i>
                                 </div>
 
-                                <!-- Modal Bootstrap -->
-                                <div class="modal fade" id="createPlaceModal" tabindex="-1" aria-labelledby="createPlaceModal" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title text-black" id="createPlaceModalLabel">Créer un nouveau lieu</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form id="LieuForm" action="{{ path('sorties_creer') }}" method="POST">
-                                                    {{ form_start(lieuForm) }}
-                                                    <div class="mb-3">
-                                                        {{ form_row(lieuForm.nom) }}
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        {{ form_row(lieuForm.rue) }}
-                                                    </div>
-                                                    <div class="row mb-3">
-                                                        <div class="col-6">
-                                                        {{ form_row(lieuForm.latitude) }}
-                                                        </div>
-                                                        <div class="col-6">
-                                                            {{ form_row(lieuForm.longitude) }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        {{ form_widget(lieuForm.ville, {'attr': {'class': 'form-control'}}) }}
-                                                    </div>
-                                                    {{ form_widget(lieuForm.save, {'attr': {'class': 'btn btn-success'}}) }}
-                                                </form>
-                                                {{ form_end(lieuForm) }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
                             <div class="mb-4">
                                 {{ form_row(sortieform.rue, {'attr': {'class': "form-control"}}) }}
@@ -131,6 +95,42 @@
                     </div>
 
                     {{ form_end(sortieform) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Bootstrap -->
+    <div class="modal fade" id="createPlaceModal" tabindex="-1" aria-labelledby="createPlaceModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-black" id="createPlaceModalLabel">Créer un nouveau lieu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="LieuForm" action="{{ path('sorties_creer') }}" method="POST">
+                        {{ form_start(lieuForm) }}
+                        <div class="mb-3">
+                            {{ form_row(lieuForm.nom) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(lieuForm.rue) }}
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                {{ form_row(lieuForm.latitude) }}
+                            </div>
+                            <div class="col-6">
+                                {{ form_row(lieuForm.longitude) }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            {{ form_widget(lieuForm.ville, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        {{ form_widget(lieuForm.save, {'attr': {'class': 'btn btn-success'}}) }}
+                    </form>
+                    {{ form_end(lieuForm) }}
                 </div>
             </div>
         </div>

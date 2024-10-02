@@ -103,7 +103,7 @@ class SortieController extends AbstractController
                         'rue' => $lieu->getRue(),
                         'latitude' => $lieu->getLatitude(),
                         'longitude' => $lieu->getLongitude(),
-                        'ville' => $lieu->getVille()->getNom(), // Utilise le nom de la ville ici
+                        'ville' => $lieu->getVille()->getNom(),
                     ]
                 ], 200);
             }

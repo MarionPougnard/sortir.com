@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{  parent() ~ title }}{% endblock %}
+
+{% block body %}
+    <div class="container w-75">
+        <h1 class="m-5 text-center">Gérer les lieux</h1>
+{#        <div class="container">
+            {{ form_start(formLieu, {'attr': {'id': 'filterForm'}}) }}
+            <div class="form-group d-flex align-items-center mb-3">
+                {{ form_label(formLieu.searchLieu, null, {'label_attr': {'class': 'me-2'}}) }}
+                {{ form_widget(formLieu.searchLieu, {'attr': {'class': 'form-control m-2 fw-normal w-25', 'placeholder': "Search"}}) }}
+                <div class="d-flex ms-2">
+                    <button type="submit" class="btn btn-info btn-sm me-2 fas fa-search" title="Recherche"></button>
+                    <a class="btn btn-danger btn-sm fas fa-undo" title="Réinitialiser recherche" href="{{ path('app_lieu') }}"></a>
+                </div>
+            </div>
+            {{ form_end(formLieu) }}
+        </div>#}
+        <div style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-striped">
+                <thead style="position: sticky; top: 0; background-color: white; z-index: 1">
+                <tr>
+                    <th class="ps-5">Nom</th>
+                    <th class="ps-5">Rue</th>
+                    <th class="ps-5">Latitude</th>
+                    <th class="ps-5">Longitude</th>
+                    <th class="ps-5">Ville</th>
+                    <th class="text-center">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for lieu in lieux %}
+                    <tr class="align-middle">
+                        <td class="ps-5" style="white-space: nowrap;">{{ lieu.nom }}</td>
+                        <td class="ps-5" style="white-space: nowrap;">{{ lieu.rue }}</td>
+                        <td class="ps-5" style="white-space: nowrap;">{{ lieu.latitude }}</td>
+                        <td class="ps-5" style="white-space: nowrap;">{{ lieu.longitude }}</td>
+                        <td class="ps-5" style="white-space: nowrap;">{{ lieu.ville }}</td>
+                        <td class="w-50">
+                            <div class="d-flex justify-content-end">
+                                <form method="POST" action="{{ path('modification_lieu', {'id': lieu.id }) }}" class="me-5">
+                                    <button class="btn btn-success px-4k" type="submit">Modifier</button>
+                                </form>
+                                <form method="POST" action="{{ path('lieu_suppression', {'id': lieu.id }) }}"
+                                      onsubmit="return confirm('Voulez-vous vraiment supprimer ce lieu ?')">
+                                    <button class="btn btn-danger px-4k" type="submit">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-end mt-5">
+            <a href="{{ path('app_admin') }}" class="btn btn-secondary me-3">Retour</a>
+            <form method="POST" action="{{ path('ajouter_lieu') }}">
+                <button class="btn btn-success px-4k" type="submit">Ajouter</button>
+            </form>
+        </div>
+
+    </div>
+
+{% endblock %}

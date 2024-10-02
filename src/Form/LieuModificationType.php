@@ -12,42 +12,37 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class LieuType extends AbstractType
+class LieuModificationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-   /*         ->add('search', TextType::class, [
-                'required' => false,
-                'label' => 'Le nom du lieu contient',
-            ])*/
-
             ->add('nom', TextType::class, [
-                'label' => false,
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Nom du lieu']
+                'label' => 'Nom du lieu',
+                'attr' => ['class' => 'form-control']
             ])
 
             ->add('rue', TextType::class, [
-                'label' => false,
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Nom de la rue',]
+                'label' => 'Nom de la rue',
+                'attr' => ['class' => 'form-control']
             ])
 
             ->add('latitude', NumberType::class, [
-                'label' => false,
+                'label' => 'Latitude',
                 'required' => false,
                 'scale' => 6,
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Latitude'],
+                'attr' => ['class' => 'form-control'],
             ])
 
             ->add('longitude', NumberType::class, [
-                'label' => false,
+                'label' => 'Longitude',
                 'required' => false,
                 'scale' => 6,
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Longitude'],
+                'attr' => ['class' => 'form-control'],
             ])
 
             ->add('ville', EntityType::class, [
-                'label' => false,
+                'label' => 'Ville',
                 'class' => Ville::class,
                 'placeholder' => 'Sélectionner une ville',
                 'choice_label' => 'nom',
