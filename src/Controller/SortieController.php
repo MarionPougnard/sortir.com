@@ -86,40 +86,6 @@ class SortieController extends AbstractController
         // Modal création lieu (avec gestion AJAX)
         $lieu = new Lieu();
         $formLieu = $this->createForm(LieuType::class, $lieu);
-        $formLieu->handleRequest($request);
-
-        // Gestion AJAX pour la création du lieu
-        if ($formLieu->isSubmitted() && $formLieu->isValid()) {
-            $entityManager->persist($lieu);
-            $entityManager->flush();
-
-            // Si la requête est AJAX, renvoyer une réponse JSON avec les informations du lieu
-            if ($request->isXmlHttpRequest()) {
-                return new JsonResponse([
-                    'message' => 'Lieu créé avec succès',
-                    'lieu' => [
-                        'id' => $lieu->getId(),
-                        'nom' => $lieu->getNom(),
-                        'rue' => $lieu->getRue(),
-                        'latitude' => $lieu->getLatitude(),
-                        'longitude' => $lieu->getLongitude(),
-                        'ville' => $lieu->getVille()->getNom(),
-                    ]
-                ], 200);
-            }
-
-            // Sinon, redirection classique
-            return $this->redirectToRoute('creer');
-        }
-
-        // En cas de requête AJAX mais avec des erreurs, on renvoie le formulaire avec erreurs
-        if ($request->isXmlHttpRequest() && !$formLieu->isValid()) {
-            return new JsonResponse([
-                'form' => $this->renderView('creerSortie.html.twig', [
-                    'lieuForm' => $formLieu->createView(),
-                ]),
-            ], 400);
-        }
 
         // Formulaire de création/modification de sortie classique
         $action = $request->get('action');

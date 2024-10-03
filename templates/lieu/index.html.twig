@@ -5,7 +5,7 @@
 {% block body %}
     <div class="container w-75">
         <h1 class="m-5 text-center">Gérer les lieux</h1>
-{#        <div class="container">
+        <div class="container">
             {{ form_start(formLieu, {'attr': {'id': 'filterForm'}}) }}
             <div class="form-group d-flex align-items-center mb-3">
                 {{ form_label(formLieu.searchLieu, null, {'label_attr': {'class': 'me-2'}}) }}
@@ -16,7 +16,7 @@
                 </div>
             </div>
             {{ form_end(formLieu) }}
-        </div>#}
+        </div>
         <div style="max-height: 400px; overflow-y: auto;">
             <table class="table table-striped">
                 <thead style="position: sticky; top: 0; background-color: white; z-index: 1">

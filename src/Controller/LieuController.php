@@ -2,17 +2,16 @@
 
 namespace App\Controller;
 
-use App\DTO\RechercheVille;
+use App\DTO\RechercheLieu;
 use App\Entity\Lieu;
 use App\Entity\Ville;
 use App\Form\LieuModificationType;
+use App\Form\LieuSearchType;
 use App\Form\LieuType;
-use App\Form\VilleSearchType;
-use App\Form\VilleType;
 use App\Repository\LieuRepository;
-use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,8 +24,7 @@ class LieuController extends AbstractController
     #[Route('/lieu', name: 'app_lieu')]
     public function index(LieuRepository $lieuRepository, Request $request): Response
     {
-        $lieux = $lieuRepository->findAll();
-/*        $filtreRecherche = new RechercheLieu();
+        $filtreRecherche = new RechercheLieu();
         $formRecherche = $this->createForm(LieuSearchType::class, $filtreRecherche);
         $formRecherche->handleRequest($request);
         $lieux = $lieuRepository->findAll();
@@ -34,14 +32,33 @@ class LieuController extends AbstractController
         if ($formRecherche->isSubmitted() && $formRecherche->isValid()) {
             $filtreRecherche = $formRecherche->getData();
             $lieux = $lieuRepository->rechercheLieuAvecFiltre($filtreRecherche);
-        }*/
+        }
+
+        $lieux = $lieuRepository->findAll();
 
         return $this->render('lieu/index.html.twig', [
             'title' => 'Les lieux',
             'lieux' => $lieux,
-        /*    'formLieu' => $formRecherche->createView(),*/
-
+            'formLieu' => $formRecherche->createView(),
         ]);
+    }
+
+    #[Route('/lieu/ajouter', name: 'ajax_ajouter_lieu', methods: ['POST'])]
+    public function ajaxCreateLieu(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $lieu = new lieu();
+        $form = $this->createForm(LieuType::class, $lieu, ['csrf_protection' => false]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $entityManager->persist($lieu);
+            $entityManager->flush();
+
+            return new JsonResponse(['id' => $lieu->getId()], Response::HTTP_CREATED);
+        }
+
+        return new JsonResponse($this->getFormErrors($form), Response::HTTP_BAD_REQUEST);
     }
 
     #[IsGranted('ROLE_ADMIN')]
@@ -91,7 +108,8 @@ class LieuController extends AbstractController
 
     #[Route('/lieu/{id<\d+>}/supprimer', name: 'lieu_suppression', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function suppression_lieu(LieuRepository $lieuRepository, EntityManagerInterface $entityManager, int $id): Response {
+    public function suppression_lieu(LieuRepository $lieuRepository, EntityManagerInterface $entityManager, int $id): Response
+    {
 
         $lieuASupprimer = $lieuRepository->find($id);
 
@@ -135,5 +153,33 @@ class LieuController extends AbstractController
             'longitude' => $lieu->getLongitude(),
             'ville' => $lieu->getVille()?->getid(),
         ]);
+    }
+
+
+    /**
+     * @param FormInterface $form
+     * @return array
+     */
+    private function getFormErrors(FormInterface $form): array
+    {
+        $errors = [];
+
+        // Erreurs globales du formulaire
+        foreach ($form->getErrors() as $error) {
+            $errors['global'][] = $error->getMessage();
+        }
+
+        // Erreurs des champs enfants
+        foreach ($form->all() as $child) {
+            if (!$child->isValid()) {
+                $childErrors = [];
+                foreach ($child->getErrors() as $error) {
+                    $childErrors[] = $error->getMessage();
+                }
+                $errors[$child->getName()] = $childErrors;
+            }
+        }
+
+        return $errors;
     }
 }

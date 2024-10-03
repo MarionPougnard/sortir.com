@@ -109,7 +109,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="LieuForm" action="{{ path('sorties_creer') }}" method="POST">
+                    <form id="LieuForm" action="{{ path('ajax_ajouter_lieu') }}" method="POST">
                         {{ form_start(lieuForm) }}
                         <div class="mb-3">
                             {{ form_row(lieuForm.nom) }}
@@ -192,26 +192,33 @@
             }
         });
 
-        $(document).ready(function() {
-            $('#lieuForm').on('submit', function(e) {
+
+
+
+        jQuery(document).ready(function() {
+            jQuery('#LieuForm').on('submit', function(e) {
                 e.preventDefault(); // Empêche le comportement par défaut de soumission du formulaire
 
-                var form = $(this);
-                $.ajax({
+                let form = jQuery(this);
+                jQuery.ajax({
                     url: form.attr('action'),
                     type: form.attr('method'),
                     data: form.serialize(), // Sérialiser les données du formulaire
                     success: function(response) {
                         // Si le lieu est créé avec succès, on ferme la modal et met à jour la liste des lieux
-                        alert(response.message);
-                        $('#createPlaceModal').modal('hide'); // Fermer la modal
+                        jQuery('#createPlaceModal').modal('hide'); // Fermer la modal
+                        jQuery('.modal-backdrop').remove();
+
+                        jQuery('#sortie_creation_modification_rue').val(jQuery('#lieu_rue').val());
+
+
                         // Mettre à jour dynamiquement la liste des lieux dans la sortie
-                        $('#lieuxList').append('<option value="' + response.lieu.id + '">' + response.lieu.nom + '</option>');
+                        jQuery('#sortie_creation_modification_lieu').append('<option selected value="' + response.id + '">' + jQuery('#lieu_nom').val() + '</option>');
                     },
                     error: function(xhr) {
                         // Si une erreur survient, on remplace le formulaire dans la modal par celui retourné avec les erreurs
                         xhr.responseJSON = undefined;
-                        $('#modalBody').html(xhr.responseJSON.form);
+                        jQuery('#modalBody').html(xhr.responseJSON.form);
                     }
                 });
             });
