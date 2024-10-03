@@ -16,8 +16,7 @@ class VilleType extends AbstractType
 
         $builder
             ->add('nom', TextType::class, ['label' => 'Ville', 'attr' => ['class' => 'form-control']])
-            ->add('codePostal', TextType::class, ['label' => 'Code postal', 'attr' => ['class' => 'form-control']])
-            ->add('save', SubmitType::class, ['label' => 'Enregistrer', 'attr' => ['class' => 'btn btn-success']]);
+            ->add('codePostal', TextType::class, ['label' => 'Code postal', 'attr' => ['class' => 'form-control']]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

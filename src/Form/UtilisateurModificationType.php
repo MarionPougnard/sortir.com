@@ -46,21 +46,23 @@ class UtilisateurModificationType extends AbstractType
                 'mapped' => false,  // Ne mappe pas ce champ à l'entité
                 'required' => false,
                 'label' => 'Confirmation'
-            ])
-            ->add('estActif', CheckboxType::class, [
-                'label' => 'Compte actif',
-                'required' => false
             ]);
-//            ->add('save', SubmitType::class, [
-//                'label' => 'Enregistrer',
-//                'attr' => ['class' => 'btn btn-success']
-//            ]);
+
+
+            if ($options['showEnabled']) {
+                $builder->add('estActif', CheckboxType::class, [
+                    'label' => 'Compte actif',
+                    'required' => false
+                ]);
+            }
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Utilisateur::class,
+            'showEnabled' => false,
         ]);
     }
 }

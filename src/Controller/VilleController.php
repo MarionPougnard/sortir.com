@@ -42,47 +42,31 @@ class VilleController extends AbstractController
     }
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/ville/ajouter', name: 'ajouter_ville', methods: ['GET', 'POST'])]
-    public function ajouter(Request $request, EntityManagerInterface $entityManager, VilleRepository $villeRepository): Response
+    #[Route('/ville/{id<\d+>}/modification', name: 'ville_modification', methods: ['GET', 'POST'])]
+    public function ajouterModifier(
+        ?Ville $ville,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        VilleRepository $villeRepository): Response
     {
-        $ville = new ville();
+        if (!$ville) {
+            $ville = new ville();
+        }
         $form = $this->createForm(VilleType::class, $ville);
         $form->handleRequest($request);
 
         //TODO: faire que le couple nom, code postal soit unique
         if ($form->isSubmitted() && $form->isValid()) {
-            $ville = $form->getData();
-
             $entityManager->persist($ville);
             $entityManager->flush();
-
-            $villes = $villeRepository->findAll();
 
             return $this->redirectToRoute('app_ville');
         }
 
         return $this->render('ville/_creation.html.twig', [
             'villeForm' => $form->createView(),
-        ]);
-    }
-
-    #[IsGranted('ROLE_ADMIN')]
-    #[Route('/ville/{id<\d+>}/modification', name: 'ville_modification', methods: ['GET', 'POST'])]
-    public function modificationville(Request $request, Ville $ville, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(VilleType::class, $ville);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $entityManager->persist($ville);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_ville');
-        }
-
-        return $this->render('ville/_modification.html.twig', [
             'ville' => $ville,
-            'villeModification' => $form->createView(),
+            'isEdit' =>  $ville->getId() !== null
         ]);
     }
 

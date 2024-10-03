@@ -47,12 +47,8 @@ class LieuModificationType extends AbstractType
                 'placeholder' => 'Sélectionner une ville',
                 'choice_label' => 'nom',
                 'required' => false,
-            ])
-
-            ->add('save', SubmitType::class, [
-                'label' => 'Enregistrer',
-                'attr' => ['class' => 'btn btn-success']
             ]);
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void
