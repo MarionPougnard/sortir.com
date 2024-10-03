@@ -112,29 +112,30 @@
                     <form id="LieuForm" action="{{ path('ajax_ajouter_lieu') }}" method="POST">
                         {{ form_start(lieuForm) }}
                         <div class="mb-3">
-                            {{ form_row(lieuForm.nom) }}
+                            {{ form_row(lieuForm.nom, {'attr': {'id': 'lieu_nom'}}) }}
                         </div>
                         <div class="mb-3">
-                            {{ form_row(lieuForm.rue) }}
+                            {{ form_row(lieuForm.rue, {'attr': {'id': 'lieu_rue'}}) }}
                         </div>
                         <div class="row mb-3">
                             <div class="col-6">
-                                {{ form_row(lieuForm.latitude) }}
+                                {{ form_row(lieuForm.latitude, {'attr': {'id': 'lieu_latitude'}}) }}
                             </div>
                             <div class="col-6">
-                                {{ form_row(lieuForm.longitude) }}
+                                {{ form_row(lieuForm.longitude, {'attr': {'id': 'lieu_longitude'}}) }}
                             </div>
                         </div>
                         <div class="mb-3">
                             {{ form_widget(lieuForm.ville, {'attr': {'class': 'form-control'}}) }}
                         </div>
                         {{ form_widget(lieuForm.save, {'attr': {'class': 'btn btn-success'}}) }}
+                        {{ form_end(lieuForm) }}
                     </form>
-                    {{ form_end(lieuForm) }}
                 </div>
             </div>
         </div>
     </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -205,20 +206,26 @@
                     type: form.attr('method'),
                     data: form.serialize(), // Sérialiser les données du formulaire
                     success: function(response) {
-                        // Si le lieu est créé avec succès, on ferme la modal et met à jour la liste des lieux
+                        // Si le lieu est créé avec succès, on ferme la modal et met à jour les champs
                         jQuery('#createPlaceModal').modal('hide'); // Fermer la modal
-                        jQuery('.modal-backdrop').remove();
+                        jQuery('.modal-backdrop').remove(); // Supprimer le fond de modal
 
+                        // Remplir les champs concernés automatiquement
                         jQuery('#sortie_creation_modification_rue').val(jQuery('#lieu_rue').val());
-
+                        jQuery('#sortie_creation_modification_latitude').val(jQuery('#lieu_latitude').val());
+                        jQuery('#sortie_creation_modification_longitude').val(jQuery('#lieu_longitude').val());
 
                         // Mettre à jour dynamiquement la liste des lieux dans la sortie
                         jQuery('#sortie_creation_modification_lieu').append('<option selected value="' + response.id + '">' + jQuery('#lieu_nom').val() + '</option>');
-                    },
+                        jQuery('#sortie_creation_modification_ville').val(jQuery('#lieu_ville').val());
+                        },
                     error: function(xhr) {
                         // Si une erreur survient, on remplace le formulaire dans la modal par celui retourné avec les erreurs
-                        xhr.responseJSON = undefined;
-                        jQuery('#modalBody').html(xhr.responseJSON.form);
+                        if (xhr.responseJSON && xhr.responseJSON.form) {
+                            jQuery('#modalBody').html(xhr.responseJSON.form);
+                        } else {
+                            alert("Une erreur s'est produite. Veuillez réessayer.");
+                        }
                     }
                 });
             });

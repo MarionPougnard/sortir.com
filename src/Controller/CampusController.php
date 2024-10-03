@@ -60,10 +60,7 @@ class CampusController extends AbstractController
 
             $allCampus = $campusRepository->findAll();
 
-            return $this->render('campus/index.html.twig', [
-                'controller_name' => 'CampusController',
-                'allCampus' => $allCampus
-            ]);
+            return $this->redirectToRoute('app_campus');
         }
 
         return $this->render('campus/creation.html.twig', [
