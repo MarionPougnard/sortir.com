@@ -4,64 +4,81 @@
 
 {% block body %}
 
-<div id="title" class="text-center mt-2">
-    <h1 class="text-white">Connexion</h1>
-</div>
+    <div id="title" class="text-center mt-2">
+        <h1 class="text-white">Connexion</h1>
+    </div>
 
-<div class="container">
-    <div class="row justify-content-center">
+    <div class="container">
+        <div class="row justify-content-center">
 
-        <div class="col-md-8">
+            <div class="col-md-10">
 
-            <form method="post">
-                {% if error %}
-                    <div class="alert alert-danger mt-5">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                {% endif %}
+                <div class="container">
+                    <div class="row mt-5 justify-content-center">
+                        <!-- Section qui rend les colonnes de même hauteur -->
+                        <div class="col-md-10 d-flex gap-3">
+                            <!-- Colonne pour "Déjà utilisateur" -->
+                            <div class="col-md-6 d-flex flex-column">
+                                <div class="card p-4 flex-grow-1 d-flex flex-column">
+                                    <h4>Déjà utilisateur ?</h4>
 
-                {% if app.user %}
-                    <div class="mb-3">
-                        Vous êtes connecté(e) en tant que {{ app.user.userIdentifier }}, <a
-                                href="{{ path('app_logout') }}">Déconnecter</a>
-                    </div>
-                {% endif %}
+                                    <form method="post" action="{{ path('app_login') }}">
+                                        {% if error %}
+                                            <div class="alert alert-danger mt-5">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                                        {% endif %}
 
-                <div class="form-group row mt-5">
-                    <label for="inputEmail" class="col-sm-3 col-form-label">Email / Pseudo</label>
-                    <div class="col-sm-9">
-                        <input type="text" value="{{ last_username }}" name="email" id="inputEmail"
-                               class="form-control" required autofocus>
+                                        <div class="form-group mt-3">
+                                            <input type="text" value="{{ last_username }}" name="email" id="inputEmail"
+                                                   class="form-control" required autofocus placeholder="Email ou Pseudo">
+                                        </div>
+
+                                        <div class="form-group mt-3">
+                                            <input type="password" name="password" id="inputPassword" class="form-control" required placeholder="Mot de passe">
+                                        </div>
+
+                                        <div class="mt-2">
+                                            <a href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a>
+                                        </div>
+
+                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                                        <div class="form-group mt-3 d-flex align-items-center">
+                                            <label>
+                                                <input type="checkbox" name="_remember_me"> Se souvenir de moi
+                                            </label>
+                                        </div>
+
+
+                                        <div class="mt-auto">
+                                            <button class="btn btn-light w-100" type="submit">Me connecter</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Colonne pour "Nouvel utilisateur" -->
+                            <div class="col-md-6 d-flex flex-column">
+                                <div class="card p-4 flex-grow-1 d-flex flex-column">
+                                    <h4>Nouvel utilisateur ?</h4>
+
+                                    <form method="post" action="{{ path('app_register') }}">
+                                        <div class="form-group mt-3 mb-5">
+                                            <input type="text" name="email" id="inputEmail"
+                                                   class="form-control" required autofocus placeholder="Email">
+                                        </div>
+
+                                        <div class="mt-5 ">
+                                            <button class="btn btn-light w-100" type="submit">Créer mon compte</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-
-                <div class="form-group row mt-5">
-                    <label for="inputPassword" class="col-sm-3 col-form-label">Mot de passe</label>
-                    <div class="col-sm-9">
-                        <input type="password" name="password" id="inputPassword" class="form-control" required>
-                    </div>
-                </div>
-
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-                <div class="form-group row mt-5">
-                    <div class="col-sm-3 col-form-label">
-                        <button class="btn btn-success" type="submit">Se connecter</button>
-                    </div>
-                    <div class="col-sm-9 d-flex align-items-center">
-                        <label>
-                            <input type="checkbox" name="_remember_me"> Se souvenir de moi
-                        </label>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <div class="col-sm-3 d-none"></div>
-                    <div class="col-sm-9">
-                       {# <a href="{{ path('security_forgot_password_step_1') }}">Mot de passe oublié ?</a>#}
-                    </div>
-                </div>
-
-            </form>
+            </div>
         </div>
     </div>
-    {% endblock %}
+
+{% endblock %}

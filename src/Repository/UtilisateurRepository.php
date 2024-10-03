@@ -44,9 +44,9 @@ class UtilisateurRepository extends ServiceEntityRepository implements UserLoade
             $queryBuilder->andWhere('utilisateur.campus = :campus')
                 ->setParameter('campus', $filtres->campus->getId());
         }
-        if ($filtres->estActif) {
+        if ($filtres->estActif !== null) {
             $queryBuilder->andWhere('utilisateur.estActif = :actif')
-                ->setParameter('actif', true);
+                ->setParameter('actif', $filtres->estActif);
         }
 
         return $queryBuilder->getQuery()->getResult();

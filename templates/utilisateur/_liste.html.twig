@@ -1,129 +1,137 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} Les utilisateurs {% endblock %}
+{% block title %}Les utilisateurs{% endblock %}
 
 {% block body %}
-    <div id="title" class="text-center mt-3">
-        <h1 class="text-white">Gérer les utilisateurs</h1>
-    </div>
     <div class="container">
-        {{ form_start(formRecherche, {'attr': {'id': 'filterForm'}}) }}
-        <div class="row" id="inputs">
-            <div class="col-6 d-flex align-items-center">
-                <div class="form-group d-flex align-items-center mb-0 w-100">
-                    {{ form_label(formRecherche.search, null, {'label_attr': {'class': 'me-2'}}) }}
-                    {{ form_widget(formRecherche.search, {'attr': {'class': 'form-control', 'placeholder': "nom, prenom, pseudo"}}) }}
+    <h1 class="text-white text-center">Les utilisateurs</h1>
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(formRecherche, {'attr': {'id': 'filterForm'}}) }}
+            <div class="row align-items-center gap-3">
+                <div class="col-4">
+                    <div class="form-group">
+                        {{ form_widget(formRecherche.search, {'attr': {'class': 'form-control', 'placeholder': "Nom, Prenom, Pseudo"}}) }}
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group">
+                        {{ form_widget(formRecherche.campus, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+
+                <div class="col-2">
+                    <div class="form-group">
+                        {{ form_widget(formRecherche.estActif, {'attr': {'class': 'form-check-input me-2'}}) }}
+                        {{ form_label(formRecherche.estActif, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                    </div>
+                </div>
+
+                <div class="col-auto d-flex align-items-center gap-3">
+                    <button type="submit" class="btn btn-light fas fa-search" title="Recherche"></button>
+                    <a class="btn btn-dark fas fa-undo" title="Réinitialiser recherche"
+                       href="{{ path('utilisateur_liste') }}"></a>
                 </div>
             </div>
-
-            <div class="col-3 d-flex align-items-center">
-                <div class="form-group d-flex align-items-center mb-0">
-                    {{ form_label(formRecherche.campus, null, {'label_attr': {'class': 'me-2'}}) }}
-                    {{ form_widget(formRecherche.campus, {'attr': {'class': 'form-control'}}) }}
-                </div>
-            </div>
-
-            <div class="col-2 d-flex align-items-center">
-                <div class="form-check d-flex align-items-center mb-0">
-                    {{ form_widget(formRecherche.estActif, {'attr': {'class': 'form-check-input me-2'}}) }}
-                    {{ form_label(formRecherche.estActif, null, {'label_attr': {'class': 'form-check-label'}}) }}
-                </div>
-            </div>
-
-            <div class="col-1 d-flex justify-content-start align-items-center">
-                <button type="submit" class="btn btn-outline-info btn-sm me-2 fas fa-search" title="Recherche"></button>
-                <a class="btn btn-outline-danger btn-sm fas fa-undo" title="Réinitialiser recherche" href="{{ path('utilisateur_liste') }}"></a>
-            </div>
+            {{ form_end(formRecherche) }}
         </div>
-        {{ form_end(formRecherche) }}
     </div>
-    <div class="container">
-    <div class="row d-flex justify-content-center mt-5">
-        <div style="max-height: 400px; overflow-y: auto;">
-            <table class="table table-striped table-bg">
-                <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>Pseudo</th>
-                    <th>Téléphone</th>
-                    <th>Email</th>
-                    <th>Campus</th>
-                    <th>Photo</th>
-                    <th class="text-center">Actions</th>
-                    <th class="text-center">Compte actif</th>
-
-                </tr>
-                </thead>
-
-                <tbody>
-                {% for utilisateur in utilisateurs %}
-                    <tr class="align-middle">
-                        <td>{{ utilisateur.nom }}</td>
-                        <td>{{ utilisateur.prenom }}</td>
-                        <td>{{ utilisateur.pseudo }}</td>
-                        <td>{{ utilisateur.telephone }}</td>
-                        <td>{{ utilisateur.email }}</td>
-                        <td>{{ utilisateur.campus.nom }}</td>
-                        <td><img class="photo_profil"
-                                 src="{{ utilisateur.photo ? asset('img/profil/' ~ utilisateur.photo) : asset('img/profil/default_profil.png') }}"
-                                 alt="Photo de {{ utilisateur.pseudo }}"></td>
-
-                        <td>
-                            <div class="d-flex justify-content-around">
-                                <form method="post"
-                                      action="{{ path('admin_utilisateur_modification', { 'id': utilisateur.id }) }}">
-                                    <button class="btn btn-outline-success px-4k fas fa-edit" title="Modifier"></button>
-                                </form>
-
-                                <form method="post" action="{{ path('suppression_profil', { 'id': utilisateur.id }) }}"
-                                      onsubmit="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');">
-                                    <input type="hidden" name="_token"
-                                           value="{{ csrf_token('delete' ~ utilisateur.id) }}">
-                                    <button class="btn btn-outline-danger px-4k fas fa-trash" title="Supprimer"></button>
-                                </form>
-                            </div>
-                        </td>
-                        <td class="text-center"> {% if utilisateur.estActif %} ✔️ {% endif %}</td>
-                    </tr>
-                {% else %}
+    <div class="container pt-5">
+        <div class="row d-flex justify-content-center mt-2">
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table class="table table-striped">
+                    <thead style="position: sticky; top: 0; background-color: white; z-index: 1">
                     <tr>
-                        <td>Aucun utilisateur</td>
+                        <th class="ps-5">Nom</th>
+                        <th class="ps-5">Prénom</th>
+                        <th class="ps-5">Pseudo</th>
+                        <th class="ps-5">Téléphone</th>
+                        <th class="ps-5">Email</th>
+                        <th class="ps-5">Campus</th>
+                        <th class="ps-5">Photo</th>
+                        <th class="text-center">Actions</th>
+                        <th class="text-center">Compte actif</th>
+
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {% for utilisateur in utilisateurs %}
+                        <tr class="align-middle">
+                            <td class="ps-5">{{ utilisateur.nom }}</td>
+                            <td class="ps-5">{{ utilisateur.prenom }}</td>
+                            <td class="ps-5">{{ utilisateur.pseudo }}</td>
+                            <td class="ps-5">{{ utilisateur.telephone }}</td>
+                            <td class="ps-5">{{ utilisateur.email }}</td>
+                            <td class="ps-5">{{ utilisateur.campus.nom }}</td>
+                            <td><img class="photo_profil"
+                                     src="{{ utilisateur.photo ? asset('img/profil/' ~ utilisateur.photo) : asset('img/profil/default_profil.png') }}"
+                                     alt="Photo de {{ utilisateur.pseudo }}"></td>
+
+                            <td>
+                                <div class="d-flex justify-content-around">
+                                    <form method="post"
+                                          action="{{ path('utilisateur_modification', { 'id': utilisateur.id }) }}">
+                                        <button class="btn fas fa-edit me-2" type="submit" title="Modifier"></button>
+                                    </form>
+
+                                    <form method="post"
+                                          action="{{ path('suppression_profil', { 'id': utilisateur.id }) }}"
+                                          onsubmit="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');">
+                                        <input type="hidden" name="_token"
+                                               value="{{ csrf_token('delete' ~ utilisateur.id) }}">
+                                        <button class="btn fas fa-trash me-2" type="submit" title="Supprimer"></button>
+                                    </form>
+                                </div>
+                            </td>
+                            <td class="text-center"> {% if utilisateur.estActif %} ✔️ {% endif %}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td>Aucun utilisateur</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <div class="row d-flex mt-5">
-        <div class="d-flex justify-content-end">
-            <a href="{{ path('app_admin') }}" class="btn btn-secondary me-3">Retour</a>
-            <a href="{{ path('app_register') }}" class="btn btn-primary d-inline-block">Ajouter</a>
-        </div>
-    </div>
-
-    <div class="container">
-        {{ form_start(formUpload) }}
-        <div class="row align-items-center">
-            <div class="col-auto">
-                <div class="form-group d-flex align-items-center">
-                    {{ form_label(formUpload.csvFile, null, {'label_attr': {'class': 'me-2'}}) }}
-                    {{ form_row(formUpload.csvFile, {'label': false, 'attr': {'class': 'form-control'}}) }}
+    <div class="d-flex justify-content-between align-items-center mt-2">
+        <div class="w-60">
+            <div class="card">
+                <div class="card-body">
+                    {{ form_start(formUpload) }}
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <div class="form-group d-flex align-items-center">
+                                {{ form_label(formUpload.csvFile, null, {'label_attr': {'class': 'me-2'}}) }}
+                                {{ form_row(formUpload.csvFile, {'label': false, 'attr': {'class': 'form-control'}}) }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-outline-light fas fa-download"
+                                    title="Télécharger le fichier"></button>
+                        </div>
+                    </div>
+                    {{ form_end(formUpload) }}
                 </div>
             </div>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-outline-warning btn-sm fas fa-download" title="Télécharger le fichier"></button>
-            </div>
         </div>
-        {{ form_end(formUpload) }}
+        <div class="d-flex justify-content-end gap-3">
+            <a href="{{ path('app_admin') }}" class="btn btn-dark fas fa-undo"
+               title="Retour à la page administrateur"></a>
+            <a href="{{ path('app_register') }}" class="btn btn-light fas fa-plus"
+               title="Ajouter un utilisateur"></a>
+        </div>
     </div>
-        {% for message in app.flashes('success') %}
-            <div class="alert alert-success">{{ message }}</div>
-        {% endfor %}
-        {% for message in app.flashes('danger') %}
-            <div class="alert alert-danger">{{ message }}</div>
-        {% endfor %}
+
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('danger') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
 
 
 {% endblock %}

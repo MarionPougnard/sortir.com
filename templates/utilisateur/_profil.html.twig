@@ -1,17 +1,18 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div id="title" class="text-center mt-3">
+    <div id="title" class="text-center d-flex justify-content-center align-items-center gap-3 mt-3">
         {% if estutilisateur %}
             <h1>Mon profil</h1>
         {% else %}
             <h1>Profil de {{ utilisateur.pseudo }}</h1>
         {% endif %}
-
+        <a href="{{ path('utilisateur_modification', { 'id': utilisateur.id }) }}" class="btn btn-light d-inline-block fas fa-edit"></a>
     </div>
 
     <div class="text-center m-4">
         <img src="{{ utilisateur.photo ? asset('img/profil/' ~ utilisateur.photo) : asset('img/profil/default_profil.png') }}" alt="Photo de {{ utilisateur.pseudo }}">
+
     </div>
 
     <div class="container">
@@ -52,21 +53,6 @@
                     </div>
                 </table>
             </div>
-        </div>
-
-        <div class="text-center mt-4">
-            {% if estutilisateur %}
-                <a href="{{ path('utilisateur_modification', { 'id': utilisateur.id }) }}"
-                   class="btn btn-primary d-inline-block">
-                    Modifier mon profil
-                </a>
-            {% elseif isAdmin %}
-
-                <a href="{{ path('admin_utilisateur_modification', { 'id': utilisateur.id }) }}"
-                   class="btn btn-primary d-inline-block">
-                    Modifier le profil
-                </a>
-            {% endif %}
         </div>
 
     </div>

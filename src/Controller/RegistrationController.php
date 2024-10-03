@@ -20,18 +20,29 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class RegistrationController extends AbstractController
 {
-    #[IsGranted('ROLE_ADMIN')]
+
     #[Route('/register', name: 'app_register')]
     public function register(Request $request,
                              UserPasswordHasherInterface $userPasswordHasher,
                              EntityManagerInterface $entityManager,
                              SluggerInterface $slugger,
                              #[Autowire('%kernel.project_dir%/public/img/profil')] string $uploadImageDir,
-                             UtilisateurRepository $utilisateurRepository): Response
+                             UtilisateurRepository $utilisateurRepository,
+                             Security $security,
+    ): Response
     {
+        $email = $request->get('email');
         $user = new Utilisateur();
+
+        if ($email) {
+            $user->setEmail($email);
+        }
+
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
+
+        $isAdmin = $security->isGranted('ROLE_ADMIN');
+        $title = $isAdmin ? 'Créer un nouvel utilisateur' : 'Créer votre compte';
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
@@ -63,15 +74,19 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            //return $security->login($user, AppAuthenticator::class, 'main');
-            return $this->render('utilisateur/_liste.html.twig', [
-                'utilisateurs' => $utilisateurRepository->findAll(),
-                'modifprofilform' => $form->createView(),
-            ]);
+            if ($isAdmin) {
+                return $this->render('utilisateur/_liste.html.twig', [
+                    'utilisateurs' => $utilisateurRepository->findAll(),
+                    'modifprofilform' => $form->createView(),
+                ]);
+            } else {
+                return $security->login($user, AppAuthenticator::class, 'main');
+            }
         }
 
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form,
+            'title' => $title,
         ]);
     }
 }
