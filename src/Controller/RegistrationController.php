@@ -31,7 +31,13 @@ class RegistrationController extends AbstractController
                              Security $security,
     ): Response
     {
+        $email = $request->get('email');
         $user = new Utilisateur();
+
+        if ($email) {
+            $user->setEmail($email);
+        }
+
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 

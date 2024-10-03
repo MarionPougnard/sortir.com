@@ -1,12 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier mon profil{% endblock %}
+{% block title %}
+
+        {% if isSelf %}
+            Mon profil
+        {% else %}
+            Profil de {{ utilisateur.pseudo }}
+        {% endif %}
+ {% endblock %}
 
 {% block body %}
     <div id="title" class="text-center mt-3">
-        <h1>Modifier le profil</h1>
-    </div>
+        {% if isSelf %}
+            <h1>Mon profil</h1>
+        {% else %}
+            <h1>Profil de {{ utilisateur.pseudo }}</h1>
+        {% endif %}
 
+    </div>
     <div class="container">
         <div class="row d-flex justify-content-center">
 
@@ -113,17 +124,19 @@
                 </div>
 
                 <!-- Activer/Désactiver le compte -->
+                {% if isAdmin and not isSelf %}
                 <div class="form-group mt-3 d-flex justify-content-end">
                         {{ form_row(modifprofilform.estActif) }}
                 </div>
+                {% endif %}
 
                 <!-- Bouton "Enregistrer" -->
                 <div class="form-group d-flex justify-content-end mt-5">
-                    <a href="javascript:history.back()" class="btn btn-secondary me-3">Retour</a>
-                    <button type="submit" class='btn btn-success'>Enregistrer</button>
+                    <a href="javascript:history.back()" class="btn btn-dark me-3 fas fa-undo"></a>
+                    <button type="submit" class='btn btn-light fas fa-save'></button>
                 </div>
 
-                {{ form_end(modifprofilform) }}
+                {{ form_end(modifprofilform, {'render_rest': false}) }}
             </div>
         </div>
     </div>

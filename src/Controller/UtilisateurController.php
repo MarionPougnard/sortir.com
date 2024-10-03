@@ -104,17 +104,22 @@ class UtilisateurController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_USER')]
     #[Route('/{id<\d+>}/modification', name: 'utilisateur_modification', methods: ['GET', 'POST'])]
     public function modificationProfil(Request $request, Utilisateur $utilisateur, EntityManagerInterface $entityManager): Response
     {
-          if ($this->getUser() === $utilisateur) {
+        $currentUser = $this->getUser();
+        $isAdmin = $this->isGranted('ROLE_ADMIN');
+        $isSelf = $currentUser === $utilisateur;
 
+        // Vérifiez si l'utilisateur est admin ou s'il modifie son propre profil
+        if ($isAdmin || $isSelf) {
+            // Créer le formulaire
             $form = $this->createForm(UtilisateurModificationType::class, $utilisateur);
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
 
+                // Gestion du fichier uploadé
                 /** @var UploadedFile $file */
                 $file = $form->get('photo')->getData();
                 if (!\is_null($file)) {
@@ -122,66 +127,47 @@ class UtilisateurController extends AbstractController
                     try {
                         $file->move('../public/img/profil', $fileName);
                     } catch (FileException $e) {
-
+                        // Gestion de l'erreur si nécessaire
                     }
                     $utilisateur->setPhoto($fileName);
                 }
 
+                // Si c'est un admin qui modifie le profil, il peut changer le rôle ou l'activation de l'utilisateur
+                if ($isAdmin && !$isSelf) {
+                    $isActive = $form->get('estActif')->getData();
+                    if ($isActive) {
+                        $utilisateur->setRoles(['ROLE_USER']);
+                    } else {
+                        $utilisateur->setRoles(['ROLE_USER_INACTIVE']);
+                    }
+                }
+
+                // Sauvegarde des modifications
                 $entityManager->flush();
 
-                return $this->redirectToRoute('utilisateur_profil', [
-                    'id' => $utilisateur->getId(),
-                ]);
+                // Redirection après la modification
+                if ($isAdmin) {
+                    return $this->redirectToRoute('utilisateur_liste');
+                } else {
+                    return $this->redirectToRoute('utilisateur_profil', [
+                        'id' => $utilisateur->getId(),
+                    ]);
+                }
             }
 
+            // Rendre le formulaire
             return $this->render('utilisateur/_modification.html.twig', [
                 'utilisateur' => $utilisateur,
                 'modifprofilform' => $form->createView(),
+                'isAdmin' => $isAdmin,
+                'isSelf' => $isSelf,
             ]);
         } else {
+            // Si l'utilisateur n'a pas le droit de modifier ce profil, redirection vers l'accueil
             return $this->redirectToRoute('app_accueil');
         }
     }
 
-    // Pour la modif d'un utilisateur de la part d'un admin
-    #[IsGranted('ROLE_ADMIN')]
-    #[Route('/{id<\d+>}/admin/modification', name: 'admin_utilisateur_modification', methods: ['GET', 'POST'])]
-    public function adminModificationUtilisateurProfil(Request $request, Utilisateur $utilisateur, EntityManagerInterface $entityManager, UtilisateurRepository $utilisateurRepository): Response
-    {
-            $form = $this->createForm(UtilisateurModificationType::class, $utilisateur);
-            $form->handleRequest($request);
-
-            if ($form->isSubmitted() && $form->isValid()) {
-
-                /** @var UploadedFile $file */
-                $file = $form->get('photo')->getData();
-                if (!\is_null($file)) {
-                    $fileName = md5(uniqid()) . '.' . $file->guessExtension();
-                    try {
-                        $file->move('../public/img/profil', $fileName);
-                    } catch (FileException $e) {
-
-                    }
-                    $utilisateur->setPhoto($fileName);
-                }
-
-                $isActive = $form->get('estActif')->getData();
-                if ($isActive) {
-                    $utilisateur->setRoles(['ROLE_USER']);
-                } else {
-                    $utilisateur->setRoles(['ROLE_USER_INACTIVE']);
-                }
-
-                $entityManager->flush();
-
-                return $this->redirectToRoute('utilisateur_liste');
-            }
-
-            return $this->render('utilisateur/_modification.html.twig', [
-                'utilisateur' => $utilisateur,
-                'modifprofilform' => $form->createView(),
-            ]);
-    }
 
     #[Route('{id<\d+>}/supprimer', name: 'suppression_profil', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
