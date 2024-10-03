@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\DTO\RechercheSortie;
+use App\Entity\Etat;
 use App\Entity\Sortie;
+use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
@@ -95,6 +97,33 @@ class SortieRepository extends ServiceEntityRepository
 
         return $queryBuilder->getQuery()->getResult();
     }
+
+    public function rechercheSortiePourAPI(?string $etat, ?string $date) {
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->innerJoin('s.lieu', 'lieu')->addSelect('lieu')
+            ->innerJoin('s.campus', 'campus')->addSelect('campus')
+            ->innerJoin('s.etat', 'etat')->addSelect('etat')
+            ->leftJoin('s.participants', 'participants')->addSelect('participants')
+            ->andWhere('etat.libelle NOT IN (:excludedEtats)')
+            ->setParameter('excludedEtats', ['Historisée', 'Terminée', 'En création']);
+
+            if ($etat) {
+                $queryBuilder->andWhere('etat.libelle = :etatFiltre')
+                    ->setParameter('etatFiltre', $etat);
+            }
+
+             if ($date) {
+                 $dateDebut = new \DateTime($date);
+                 $dateFin = (clone $dateDebut)->modify('+1 day');
+                 $queryBuilder->andWhere('s.dateHeureDebut >= :dateDebut')
+                     ->andWhere('s.dateHeureDebut < :dateFin')
+                     ->setParameter('dateDebut', $dateDebut->format('Y-m-d H:i:s'))
+                     ->setParameter('dateFin', $dateFin->format('Y-m-d H:i:s'));
+             }
+
+            return $queryBuilder->getQuery()->getResult();
+    }
+
     //    /**
     //     * @return Sortie[] Returns an array of Sortie objects
     //     */

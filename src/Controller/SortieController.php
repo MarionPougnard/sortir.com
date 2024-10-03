@@ -29,6 +29,33 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/sorties', name: 'sorties_')]
 class SortieController extends AbstractController
 {
+
+    #[Route('/api', name: 'api', methods: ['GET'])]
+    public function getSortiesList(Request $request, SortieRepository $sortieRepository): JsonResponse
+    {
+        $etat = $request->query->get('etat');
+        $date = $request->query->get('date');
+
+        $sorties = $sortieRepository->rechercheSortiePourAPI($etat, $date);
+
+        $data = [];
+        foreach ($sorties as $sortie) {
+            $data[] = [
+                'id' => $sortie->getId(),
+                'nom' => $sortie->getNom(),
+                'dateHeureDebut' => $sortie->getDateHeureDebut()->format('Y-m-d H:i'),
+                'duree' => $sortie->getDuree(),
+                'dateLimiteInscription' => $sortie->getDateLimiteInscription()->format('Y-m-d'),
+                'nbInscriptionMax' => $sortie->getNbInscriptionMax(),
+                'etat' => $sortie->getEtat()->getLibelle(),
+                'campus' => $sortie->getCampus()->getNom(),
+                'organisateur' => $sortie->getOrganisateur()->getNom(),
+            ];
+        }
+
+        return new JsonResponse($data);
+    }
+
     #[Route('/{id<\d+>}', name: 'detail', methods: ['GET'])]
     public function voirDetailSortir(
         SortieRepository $sortieRepository,
