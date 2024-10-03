@@ -48,7 +48,7 @@ class LieuController extends AbstractController
     public function ajaxCreateLieu(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $lieu = new lieu();
-        $form = $this->createForm(LieuType::class, $lieu, ['csrf_protection' => false]);
+        $form = $this->createForm(LieuType::class, $lieu, ['csrf_protection' => true]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

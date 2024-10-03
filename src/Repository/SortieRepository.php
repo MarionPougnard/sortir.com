@@ -51,10 +51,11 @@ class SortieRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('s');
 
-        $queryBuilder->innerJoin('s.etat', 'etat', Join::WITH, 'etat.libelle != :etat')->addSelect('etat')
+        $queryBuilder->innerJoin('s.etat', 'etat')->addSelect('etat')
             ->innerJoin('s.organisateur', 'organisateur')->addSelect('organisateur')
             ->leftJoin('s.participants', 'participants')->addSelect('participants')
             ->innerJoin('s.campus', 'campus')->addSelect('campus')
+            ->andWhere('etat.libelle != :etat')
             ->setParameter('etat', 'Historisée');
 
         if (isset($filtres->search) && $filtres->search) {
@@ -77,7 +78,7 @@ class SortieRepository extends ServiceEntityRepository
                 ->setParameter('user', $utilisateur->getId());
         }
         if ($filtres->estTerminees) {
-            $queryBuilder->andWhere('s.etat LIKE :terminees')
+            $queryBuilder->andWhere('etat.libelle = :terminees')
                 ->setParameter('terminees', "Terminée");
         }
         if ($filtres->dateDebut && !$filtres->dateFin) {
