@@ -35,7 +35,6 @@ class LieuController extends AbstractController
             $lieux = $lieuRepository->rechercheLieuAvecFiltre($filtreRecherche);
         }
 
-        $lieux = $lieuRepository->findAll();
 
         return $this->render('lieu/index.html.twig', [
             'title' => 'Les lieux',
@@ -44,7 +43,8 @@ class LieuController extends AbstractController
         ]);
     }
 
-    #[Route('/lieu/ajouter', name: 'ajax_ajouter_lieu', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
+    #[Route('/lieu/ajouter/ajax', name: 'ajax_ajouter_lieu', methods: ['POST'])]
     public function ajaxCreateLieu(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $lieu = new lieu();
@@ -63,47 +63,31 @@ class LieuController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
+    #[Route('/lieu/{id<\d+>}/modification', name: 'modification_lieu', methods: ['GET', 'POST'])]
     #[Route('/lieu/ajouter', name: 'ajouter_lieu', methods: ['GET', 'POST'])]
-    public function ajouter(Request $request, EntityManagerInterface $entityManager, LieuRepository $lieuRepository): Response
+    public function ajouter(
+        ?Lieu $lieu,
+        Request $request,
+        EntityManagerInterface $entityManager): Response
     {
-        $lieu = new lieu();
-        $form = $this->createForm(LieuModificationType::class, $lieu);
+        if (!$lieu) {
+            $lieu = new lieu();
+        }
+
+        $form = $this->createForm(LieuType::class, $lieu);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $lieu = $form->getData();
-
             $entityManager->persist($lieu);
             $entityManager->flush();
-
-            $lieux = $lieuRepository->findAll();
 
             return $this->redirectToRoute('app_lieu');
         }
 
         return $this->render('lieu/_creation.html.twig', [
             'lieuModification' => $form->createView(),
-        ]);
-    }
-
-    #[IsGranted('ROLE_ADMIN')]
-    #[Route('/lieu/{id<\d+>}/modification', name: 'modification_lieu', methods: ['GET', 'POST'])]
-    public function lieuModification(Request $request, Lieu $lieu, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(LieuModificationType::class, $lieu);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $entityManager->persist($lieu);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_lieu');
-        }
-
-        return $this->render('lieu/_modification.html.twig', [
             'lieu' => $lieu,
-            'lieuModification' => $form->createView(),
+            'isEdit' => $lieu->getId() !== null,
         ]);
     }
 

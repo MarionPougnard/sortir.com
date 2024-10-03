@@ -1,11 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Création d'un lieu{% endblock %}
+{% block title %}
+    {{ isEdit ? 'Modifier un lieu' : 'Ajouter un lieu' }}
+{% endblock %}
 
 {% block body %}
-    <div id="title" class="text-center mt-5 pt-5">
-        <h1>Créer un lieu</h1>
-    </div>
+    <h1 class="text-center mt-5">
+        {{ isEdit ? 'Modifier le lieu ' ~ lieu.nom : 'Ajouter un lieu' }}
+    </h1>
 
     <div class="container w-50">
         <div class="row d-flex justify-content-center">
@@ -13,65 +15,44 @@
             <div class="col-md-8">
                 {{ form_start(lieuModification) }}
 
-                <!-- Nom -->
                 <div class="form-group row mt-5">
-                    <label for="nom" class="col-sm-3 col-form-label">
-                        {{ form_label(lieuModification.nom) }}
-                    </label>
-                    <div class="col-sm-9">
+                    <div class="col-sm-12">
                         {{ form_widget(lieuModification.nom, {'attr': {'class': 'form-control'}}) }}
                         {{ form_errors(lieuModification.nom) }}
                     </div>
                 </div>
 
-                <!-- Rue -->
                 <div class="form-group row mt-3">
-                    <label for="rue" class="col-sm-3 col-form-label">
-                        {{ form_label(lieuModification.rue) }}
-                    </label>
-                    <div class="col-sm-9">
+                    <div class="col-sm-12">
                         {{ form_widget(lieuModification.rue, {'attr': {'class': 'form-control'}}) }}
                         {{ form_errors(lieuModification.rue) }}
                     </div>
                 </div>
 
-                <!-- Latitude -->
                 <div class="form-group row mt-3">
-                    <label for="latitude" class="col-sm-3 col-form-label">
-                        {{ form_label(lieuModification.latitude) }}
-                    </label>
-                    <div class="col-sm-9">
+                    <div class="col-sm-12">
                         {{ form_widget(lieuModification.latitude, {'attr': {'class': 'form-control'}}) }}
                         {{ form_errors(lieuModification.latitude) }}
                     </div>
                 </div>
 
-                <!-- Longitude -->
                 <div class="form-group row mt-3">
-                    <label for="longitude" class="col-sm-3 col-form-label">
-                        {{ form_label(lieuModification.longitude) }}
-                    </label>
-                    <div class="col-sm-9">
+                    <div class="col-sm-12">
                         {{ form_widget(lieuModification.longitude, {'attr': {'class': 'form-control'}}) }}
                         {{ form_errors(lieuModification.longitude) }}
                     </div>
                 </div>
 
-                <!-- Ville -->
                 <div class="form-group row mt-3">
-                    <label for="ville" class="col-sm-3 col-form-label">
-                        {{ form_label(lieuModification.ville) }}
-                    </label>
-                    <div class="col-sm-9">
+                    <div class="col-sm-12">
                         {{ form_widget(lieuModification.ville, {'attr': {'class': 'form-control'}}) }}
                         {{ form_errors(lieuModification.ville) }}
                     </div>
                 </div>
 
-                <!-- Bouton "Enregistrer" -->
                 <div class="form-group d-flex justify-content-end mt-5">
-                    <a href="javascript:history.back('app_lieu')" class="btn btn-secondary me-3">Retour</a>
-                    {{ form_widget(lieuModification.save, {'attr': {'class': 'btn btn-success'}}) }}
+                    <a href="javascript:history.back()" class="btn btn-dark me-3 fas fa-undo"></a>
+                    <button type="submit" class='btn btn-light fas fa-save' title="Enregistrer"></button>
                 </div>
 
                 {{ form_end(lieuModification) }}
@@ -80,6 +61,11 @@
         </div>
     </div>
 
-    </div>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('danger') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
 
 {% endblock %}

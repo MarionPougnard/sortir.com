@@ -1,18 +1,24 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ parent() ~ title }}
+    {{ title }}
 {% endblock %}
 
 {% block body %}
-    <p>Nom de la sortie : {{ sortie.nom }}</p>
-    <p>Date et heure de début : {{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</p>
-    <p>Campus : {{ sortie.campus.nom }}</p>
-    <p>Lieu : {{ sortie.lieu.nom }}</p>
-    <p>Ville : {{ sortie.lieu.ville.nom }}</p>
-    {{ form_start(annulationSortieForm, {'method': 'POST'}) }}
-        {{ form_widget(annulationSortieForm) }}
-         <button type="submit" class="btn btn-secondary">Enregistrer</button>
-    {{ form_end(annulationSortieForm) }}
+    <div class="container">
+        <h1 class="m-5 text-center">Annuler la sortie : {{ sortie.nom }}</h1>
+        <div class="card p-5">
+            <p>Date et heure de début : {{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</p>
+            <p>Campus : {{ sortie.campus.nom }}</p>
+            <p>Lieu : {{ sortie.lieu.nom }}</p>
+            <p>Ville : {{ sortie.lieu.ville.nom }}</p>
+            {{ form_start(annulationSortieForm, {'method': 'POST'}) }}
+            {{ form_widget(annulationSortieForm) }}
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-light fas fa-save" title="Enregistrer"></button>
+            </div>
+            {{ form_end(annulationSortieForm) }}
+        </div>
+    </div>
 
 {% endblock %}

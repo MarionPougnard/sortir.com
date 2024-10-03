@@ -3,7 +3,7 @@
 {% block title %}Les campus{% endblock %}
 
 {% block body %}
-    <div class="container">
+    <div class="container w-75">
         <h1 class="m-5 text-center">Les campus</h1>
         <div class="card">
             <div class="card-body">
@@ -70,5 +70,12 @@
         </div>
 
     </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('danger') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
 
 {% endblock %}

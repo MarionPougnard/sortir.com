@@ -10,7 +10,7 @@
  {% endblock %}
 
 {% block body %}
-    <div id="title" class="text-center mt-3">
+    <div id="title" class="text-center mt-5">
         {% if isSelf %}
             <h1>Mon profil</h1>
         {% else %}
@@ -132,11 +132,12 @@
 
                 <!-- Bouton "Enregistrer" -->
                 <div class="form-group d-flex justify-content-end mt-5">
-                    <a href="javascript:history.back()" class="btn btn-dark me-3 fas fa-undo"></a>
-                    <button type="submit" class='btn btn-light fas fa-save'></button>
+                    <a href="javascript:history.back()" class="btn btn-dark me-3 fas fa-undo" title="Retour à la page précédente"></a>
+
+                    <button type="submit" class='btn btn-light fas fa-save' title="Enregistrer"></button>
                 </div>
 
-                {{ form_end(modifprofilform, {'render_rest': false}) }}
+                {{ form_end(modifprofilform) }}
             </div>
         </div>
     </div>

@@ -111,15 +111,12 @@ class UtilisateurController extends AbstractController
         $isAdmin = $this->isGranted('ROLE_ADMIN');
         $isSelf = $currentUser === $utilisateur;
 
-        // Vérifiez si l'utilisateur est admin ou s'il modifie son propre profil
         if ($isAdmin || $isSelf) {
-            // Créer le formulaire
-            $form = $this->createForm(UtilisateurModificationType::class, $utilisateur);
+            $form = $this->createForm(UtilisateurModificationType::class, $utilisateur, ['showEnabled' => $isAdmin && !$isSelf]);
             $form->handleRequest($request);
-
+            dump($form->isSubmitted());
             if ($form->isSubmitted() && $form->isValid()) {
 
-                // Gestion du fichier uploadé
                 /** @var UploadedFile $file */
                 $file = $form->get('photo')->getData();
                 if (!\is_null($file)) {
@@ -127,7 +124,6 @@ class UtilisateurController extends AbstractController
                     try {
                         $file->move('../public/img/profil', $fileName);
                     } catch (FileException $e) {
-                        // Gestion de l'erreur si nécessaire
                     }
                     $utilisateur->setPhoto($fileName);
                 }
@@ -155,7 +151,6 @@ class UtilisateurController extends AbstractController
                 }
             }
 
-            // Rendre le formulaire
             return $this->render('utilisateur/_modification.html.twig', [
                 'utilisateur' => $utilisateur,
                 'modifprofilform' => $form->createView(),

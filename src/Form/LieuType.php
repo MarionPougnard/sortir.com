@@ -17,11 +17,6 @@ class LieuType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-   /*         ->add('search', TextType::class, [
-                'required' => false,
-                'label' => 'Le nom du lieu contient',
-            ])*/
-
             ->add('nom', TextType::class, [
                 'label' => false,
                 'attr' => ['class' => 'form-control', 'placeholder' => 'Nom du lieu']
@@ -52,11 +47,6 @@ class LieuType extends AbstractType
                 'placeholder' => 'Sélectionner une ville',
                 'choice_label' => 'nom',
                 'required' => false,
-            ])
-
-            ->add('save', SubmitType::class, [
-                'label' => 'Enregistrer',
-                'attr' => ['class' => 'btn btn-success']
             ]);
     }
 

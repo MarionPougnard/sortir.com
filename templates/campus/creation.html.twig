@@ -1,30 +1,37 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}ajout campus{% endblock %}
-
+{% block title %}
+    {{ isEdit ? 'Modifier un campus' : 'Ajouter un campus' }}
+{% endblock %}
 {% block body %}
-    <h1 class="text-center mt-5">Ajouter un campus</h1>
+    <h1 class="text-center mt-5">
+        {{ isEdit ? 'Modifier le campus ' ~ campus.nom : 'Ajouter un campus' }}
+    </h1>
 
     <div class="container w-25 mt-5">
         {{ form_start(campusForm) }}
 
         <div class="form-group row mt-5">
-            <label for="nom" class="col-sm-3 col-form-label">
-                {{ form_label(campusForm.nom) }}
-            </label>
-            <div class="col-sm-9">
-                {{ form_widget(campusForm.nom, {'attr': {'class': 'form-control'}}) }}
+            <div class="col-sm-12">
+                {{ form_widget(campusForm.nom, {'attr': {'class': 'form-control', 'placeholder': 'Campus'}}) }}
             </div>
         </div>
 
-        <!-- Bouton "Enregistrer" -->
+
         <div class="form-group d-flex justify-content-end mt-5">
-            <a href="javascript:history.back()" class="btn btn-secondary me-3">Retour</a>
-            {{ form_widget(campusForm.save, {'attr': {'class': 'btn btn-success'}}) }}
+            <a href="javascript:history.back()" class="btn btn-dark me-3 fas fa-undo"></a>
+            <button type="submit" class='btn btn-light fas fa-save' title="Enregistrer"></button>
         </div>
 
         {{ form_end(campusForm) }}
 
     </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('danger') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
 
 {% endblock %}
