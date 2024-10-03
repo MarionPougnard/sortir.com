@@ -4,12 +4,18 @@ namespace App\Controller;
 
 use App\Entity\Campus;
 use App\Entity\Etat;
+use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Entity\Utilisateur;
+use App\Entity\Ville;
 use App\Enum\EtatEnum;
 use App\Form\AnnulationSortieFormType;
+use App\Form\LieuType;
 use App\Form\SortieCreationModificationType;
+use App\Form\VilleType;
+use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
+use App\Repository\VilleRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -53,8 +59,9 @@ class SortieController extends AbstractController
     #[Route('/{id<\d+>}', name: 'detail', methods: ['GET'])]
     public function voirDetailSortir(
         SortieRepository $sortieRepository,
-        int $id =null
-    ): Response {
+        int              $id = null
+    ): Response
+    {
         $user = $this->getUser();
         if (!$user) {
             return $this->redirectToRoute('app_login');
@@ -71,12 +78,14 @@ class SortieController extends AbstractController
 
     }
 
+    use Symfony\Component\HttpFoundation\JsonResponse;
+
     #[Route('/creer', name: 'creer', methods: ['GET', 'POST'])]
     #[Route('/{id<\d+>}/modifier', name: 'modifier', methods: ['GET', 'POST'])]
     public function creerOuModifierSortie(
-        Request $request,
+        Request                $request,
         EntityManagerInterface $entityManager,
-        ?Sortie $sortie = null,
+        ?Sortie                $sortie = null
     ): Response
     {
 
@@ -85,6 +94,7 @@ class SortieController extends AbstractController
             $organisateur = $this->getUser();
             $sortie->setOrganisateur($organisateur);
         } else {
+            // Logique de modification de la sortie
             $organisateur = $this->getUser();
             if ($sortie->getOrganisateur() !== $organisateur) {
                 $this->addFlash('error', 'Vous ne pouvez pas modifier cette sortie car vous n\'en êtes pas l\'organisateur.');
@@ -96,18 +106,19 @@ class SortieController extends AbstractController
             }
         }
 
-        $form = $this->createForm(SortieCreationModificationType::class, $sortie);
+        // Formulaire de création ou modification de sortie
+        $formSortie = $this->createForm(SortieCreationModificationType::class, $sortie);
+        $formSortie->handleRequest($request);
 
-        if ($sortie->getLieu()) {
-            $ville = $sortie->getLieu()->getVille();
-            $form->get('ville')->setData($ville);
-        }
+        // Modal création lieu (avec gestion AJAX)
+        $lieu = new Lieu();
+        $formLieu = $this->createForm(LieuType::class, $lieu);
 
-        $form->handleRequest($request);
-
+        // Formulaire de création/modification de sortie classique
         $action = $request->get('action');
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($formSortie->isSubmitted() && $formSortie->isValid()) {
+            // Logique de sauvegarde de la sortie
             $etatRepo = $entityManager->getRepository(Etat::class);
             if ($action === 'enregistrer') {
                 $etat = $etatRepo->findOneBy(['libelle' => EtatEnum::EN_CREATION]);
@@ -127,21 +138,23 @@ class SortieController extends AbstractController
                 $this->addFlash('error', 'Une erreur est survenue lors de l\'enregistrement de la sortie : ' . $exception->getMessage());
             }
 
-
             return $this->redirectToRoute('app_accueil');
         }
+
         return $this->render('sortie/creerSortie.html.twig', [
-            'sortieform' => $form->createView(),
+            'sortieform' => $formSortie->createView(),
+            'lieuForm' => $formLieu->createView(),
             'title' => $sortie->getId() ? 'Modifier une sortie' : 'Créer une sortie',
             'sortie' => $sortie,
         ]);
     }
 
-    #[Route('/{id<\d+>}/publier', name: 'publier', methods: ['GET','POST'])]
+    #[Route('/{id<\d+>}/publier', name: 'publier', methods: ['GET', 'POST'])]
     public function publier(
-        Sortie $sortie,
+        Sortie                 $sortie,
         EntityManagerInterface $entityManager
-    ): Response {
+    ): Response
+    {
         $etatRepo = $entityManager->getRepository(Etat::class);
         $etat = $etatRepo->findOneBy(['libelle' => EtatEnum::OUVERTE]);
         $sortie->setEtat($etat);
@@ -151,11 +164,13 @@ class SortieController extends AbstractController
 
         return $this->redirectToRoute('app_accueil');
     }
-    #[Route('/{id<\d+>}/supprimer', name: 'supprimer', methods: ['GET','POST'])]
+
+    #[Route('/{id<\d+>}/supprimer', name: 'supprimer', methods: ['GET', 'POST'])]
     public function suppression(
-        Sortie $sortie,
+        Sortie                 $sortie,
         EntityManagerInterface $entityManager
-    ): Response {
+    ): Response
+    {
         $entityManager->remove($sortie);
         $entityManager->flush();
         $this->addFlash('success', 'La sortie a bien été supprimée');
@@ -165,23 +180,22 @@ class SortieController extends AbstractController
 
     #[Route('/{id}/annuler', name: 'annuler', methods: ['GET', 'POST'])]
     public function annulerSortie(
-        Request $request,
-        Sortie $sortie,
+        Request                $request,
+        Sortie                 $sortie,
         EntityManagerInterface $entityManager
 
     ): Response
     {
         $user = $this->getUser();
         if ($user !== $sortie->getOrganisateur() || !$user->setRoles('ROLE_ADMIN')) {
-           $this->addFlash('error', 'Vous n\'êtes pas autorisé à annuler cette sortie.');
+            $this->addFlash('error', 'Vous n\'êtes pas autorisé à annuler cette sortie.');
         }
         $etatAnnule = $entityManager->getRepository(Etat::class)->findOneBy(['libelle' => 'Annulée']);
 
         $annulationSortieForm = $this->createForm(AnnulationSortieFormType::class, $sortie);
         $annulationSortieForm->handleRequest($request);
 
-        if ($annulationSortieForm->isSubmitted() && $annulationSortieForm->isValid() && $sortie->getDateHeureDebut() > new DateTime('now'))
-        {
+        if ($annulationSortieForm->isSubmitted() && $annulationSortieForm->isValid() && $sortie->getDateHeureDebut() > new DateTime('now')) {
             $sortie->setEtat($etatAnnule);
             $sortie->setMotifAnnulation($annulationSortieForm->get('motifAnnulation')->getData());
             $entityManager->persist($sortie);
@@ -193,17 +207,18 @@ class SortieController extends AbstractController
         }
 
         return $this->render('sortie/annulerSortie.html.twig', [
-            'title'=>'Annuler une sortie',
-            "sortie"=>$sortie,
-            'annulationSortieForm'=>$annulationSortieForm->createView(),
+            'title' => 'Annuler une sortie',
+            "sortie" => $sortie,
+            'annulationSortieForm' => $annulationSortieForm->createView(),
         ]);
     }
 
-    #[Route('/{id<\d+>}/inscrire', name: 'inscrire', methods: ['GET','POST'])]
+    #[Route('/{id<\d+>}/inscrire', name: 'inscrire', methods: ['GET', 'POST'])]
     public function inscrire(
-        Sortie $sortie,
+        Sortie                 $sortie,
         EntityManagerInterface $entityManager
-    ): Response {
+    ): Response
+    {
         /** @var Utilisateur|null $utilisateur */
         $utilisateur = $this->getUser();
         if (!$utilisateur) {
@@ -227,9 +242,9 @@ class SortieController extends AbstractController
         return $this->redirectToRoute('app_accueil');
     }
 
-    #[Route('/{id<\d+>}/desinscrire', name: 'desinscrire', methods: ['GET','POST'])]
+    #[Route('/{id<\d+>}/desinscrire', name: 'desinscrire', methods: ['GET', 'POST'])]
     public function desinscrire(
-        Sortie $sortie,
+        Sortie                 $sortie,
         EntityManagerInterface $entityManager
     ): Response
     {
@@ -239,7 +254,7 @@ class SortieController extends AbstractController
         if ($sortie
             && $sortie->getParticipants()->contains($utilisateur)
             && ($sortie->getEtat()->getLibelle() === EtatEnum::OUVERTE->value
-            || $sortie->getEtat()->getLibelle() === EtatEnum::CLOTUREE->value)) {
+                || $sortie->getEtat()->getLibelle() === EtatEnum::CLOTUREE->value)) {
 
             $sortie->removeParticipant($utilisateur);
             $entityManager->flush();
@@ -248,5 +263,4 @@ class SortieController extends AbstractController
 
         return $this->redirectToRoute('app_accueil');
     }
-
 }

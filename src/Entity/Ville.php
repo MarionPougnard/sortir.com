@@ -93,4 +93,9 @@ class Ville
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        return $this->nom; // Retourne le nom de la ville
+    }
 }
