@@ -95,7 +95,6 @@ class SortieRepository extends ServiceEntityRepository
             $queryBuilder->andWhere('DATE_ADD(s.dateHeureDebut, s.duree, \'minute\') < :dateFin')
                 ->setParameter('dateFin', $filtres->dateFin->format("Y-m-d H:i:s"));
         }
-
         return $queryBuilder->getQuery()->getResult();
     }
 
